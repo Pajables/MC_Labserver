@@ -30,6 +30,4 @@ def create_app():
     from .robots_api import robots_api
     app.register_blueprint(robots_api, url_prefix='/api')
 
-
-
     return app

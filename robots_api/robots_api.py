@@ -5,6 +5,7 @@ from .. import db
 robots_api = Blueprint("robots_api", __name__)
 
 
-@robots_api.route("/")
+@robots_api.route("/", methods=["GET", "POST"])
 def index():
-    return render_template()
+    # GET: server responds with synthesis steps
+
