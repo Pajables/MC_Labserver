@@ -6,6 +6,10 @@ from flask_login import login_required, current_user
 
 general = Blueprint('general', __name__)
 
+db = SQLAlchemy()
+session= db.session()
+cursor = session.execute(sql).cursor
+
 
 @general.route('/')
 def index():
