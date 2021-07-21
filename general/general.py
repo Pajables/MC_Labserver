@@ -15,23 +15,36 @@ def index():
 @general.route("/robots", methods=["GET", 'POST'])
 @login_required
 def robots_display():
-    # todo get robots from database and display in a table
+    # Get robots from database and display in a table
+    mycursor.execute("SELECT * FROM ROBOTS")
+    robots_data = mycursor.fetchall()
+
     if request.method == "GET":
-        # robots_list = robots_update()
+        return render_template('robots_display.html', robots_data=robots_data)
         # render a template using robots_list
 
 
 @general.route("/reactions", methods=['GET', 'POST'])
 @login_required
 def reactions_display():
-    # todo get reactions from database and display in a table.
+    # Get reactions from database and display in a table
+    mycursor.execute("SELECT * FROM REACTION_STATUS")
+    reactions_data = mycursor.fetchall()
+
     if request.method = 'GET':
-        # reactions_list = reactions_update()
+        # todo create a reactions.html file and code for the arrangement of styles for the main page(__init__.py)
+        return render_template('reactions.html', reactions_data=reactions_data)
         # render a template using reactions_list
         # show links to specific reaction tables
 
 @general.route("/reactions/display", methods=['GET', 'POST'])
 @login_required
 def reaction_table_display():
-    pass
     # display only entries from specific reaction
+    mycursor.execute("SELECT * FROM REACTION_STATUS WHERE REACTION_NAME = "Aspirin Synthesis" AND REACTION_STATUS ="COMPLETE"")
+    reaction_data = mycursor.fetchall()
+
+    if request.method = 'POST':
+        # todo create a reactions/display.html file and code for the arrangement of styles for the main page(__init__.py)
+        return render_template('reactions/display', reaction_data=reaction_data)
+
