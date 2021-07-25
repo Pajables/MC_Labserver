@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Current reactions status</h1>
+    <table>
+        <tr>
+            <th>Reaction ID</th>
+            <th>Robot ID</th>
+            <th>Robot Name</th>
+            <th>Reaction Name</th>
+            <th>Reaction Status</th>
+            <th>Last update</th>
+            <th>Job completion date</th>
+        </tr>
+        {% for item in reactions_data %}
+        <tr>
+            <td>{{item[0]}}</td>
+            <td>{{item[1]}}</td>
+            <td>{{item[2]}}</td>
+            <td>{{item[3]}}</td>
+            <td>{{item[4]}}</td>
+            <td>{{item[5]}}</td>
+            <td>{{item[6]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="{{url_for('general.robots_display')}}"><h2>Robots</h2></a>
+    <a href="{{url_for('auth.logout')}}">Log out</a>
+</body>
+</html>

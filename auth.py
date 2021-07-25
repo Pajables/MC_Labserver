@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, redirect, request, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required
-from models import User
-from .. import db
+from .models import User
+from . import db
 
-auth = Blueprint("auth", __name__, template_folder='templates')
+auth = Blueprint("auth", __name__, template_folder='auth/templates')
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -15,9 +15,9 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        user = User.query.filter_by(user=username).first()
+        user = User.query.filter_by(USERNAME=username).first()
 
-        if not user or not check_password_hash(user.password, password):
+        if not user or not check_password_hash(user.PASSWORD, password):
             return redirect(url_for('auth.login'))
 
         login_user(user)
@@ -28,4 +28,4 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('general'))
+    return redirect(url_for('general.index'))
