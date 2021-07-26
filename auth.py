@@ -29,3 +29,21 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('general.index'))
+
+
+@auth.route('/admin')
+@login_required
+def admin():
+    pass
+
+
+@auth.route('admin/add_robot')
+@login_required
+def add_robot():
+    pass
+
+
+@auth.route('admin/add_user')
+@login_required
+def add_user():
+    pass

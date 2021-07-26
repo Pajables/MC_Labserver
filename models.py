@@ -26,3 +26,5 @@ class ReactionParameters(db.Model):
 
 class UJRobotsCommunication(db.Model):
     __table__ = db.Model.metadata.tables['UJ_Robots_Communication']
+
+# robots model for connection and authentication
