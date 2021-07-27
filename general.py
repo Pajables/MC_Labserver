@@ -9,8 +9,17 @@ general = Blueprint('general', __name__, template_folder='general/templates')
 
 
 @general.route('/')
+def landing():
+    return render_template("general/landing.html")
+
+
+@login_required
+@general.route('/index')
 def index():
-    return render_template("general/index.html")
+    if current_user.ADMIN == 1:
+        return render_template('index_admin.html')
+    else:
+        return render_template('index.html')
 
 
 @general.route("/robots", methods=["GET", 'POST'])

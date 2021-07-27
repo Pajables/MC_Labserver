@@ -1,15 +1,23 @@
 from flask import Blueprint, request
+from functools import wraps
 from werkzeug.security import check_password_hash
 from . import db
+from models import Robots
 
 
 robots_api = Blueprint("robots_api", __name__)
 
 
-def robot_login_required():
+def check_robot_login(func):
     # check hash of supplied robot key
-    pass
-
+    @wraps(func)
+    def verify_robot(*args, **kwargs):
+        robot_id = request.args[0]
+        robot_key = request.args[1]
+        robot = Robots.query.filter_by(ROBOT_ID=robot_id).first()
+        if robot and check_password_hash(robot.ROBOT_KEY, robot_key):
+            return func(*args, **kwargs)
+    return verify_robot
 
 # todo set up @robot_login_required
 @robots_api.route("/", methods=["GET", "POST"])

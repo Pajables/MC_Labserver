@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Labserver 0.2</title>
-        <link rel="stylesheet" href="/static/css/index.css">
-    </head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MC_Labserver 0.2</title>
+</head>
 <body>
-    <header>
-        <h1> Welcome to the UJ Meta-catalysis webserver</h1>
-        <h2> Please login to access the server</h2>
-        <a href="{{url_for('auth.login')}}"><h2> Login </h2></a>
-    </header>
+    <a href="{{url_for('general.robots_display')}}"><h2>Robots</h2></a>
+    <a href="{{url_for('general.reactions_display')}}"><h2>Current running reactions</h2></a>
+    {% block admin %}
+    {% endblock admin %}
+    <a href="{{url_for('auth.logout')}}">Log out</a>
 </body>
 </html>

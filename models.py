@@ -12,6 +12,7 @@ class User(UserMixin, db.Model):
     def get_id(self):
         return self.USER_ID
 
+
 class RobotStatus(db.Model):
     __table__ = db.Model.metadata.tables['Robot_Status']
 
@@ -27,4 +28,7 @@ class ReactionParameters(db.Model):
 class UJRobotsCommunication(db.Model):
     __table__ = db.Model.metadata.tables['UJ_Robots_Communication']
 
+
 # robots model for connection and authentication
+class Robots(db.model):
+    __table__ = db.Model.metadata.tables['Robots']

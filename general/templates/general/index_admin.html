@@ -1,0 +1,7 @@
+{% extends "index.html" %}
+
+{% block admin %}
+    <h2>Administrator options</h2>
+    <a href="{{url_for('admin.add_robot')}}">Add a robot</a>
+    <a href="{{url_for('admin.add_user')}}">Add a user</a>
+{% endblock admin %}
