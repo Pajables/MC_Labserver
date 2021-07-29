@@ -28,6 +28,7 @@
         </tr>
         {% endfor %}
     </table>
+    <a href="{{url_for('general.reactions_table_display'}}">View all reactions</a>
     <a href="{{url_for('general.robots_display')}}"><h2>Robots</h2></a>
     <a href="{{url_for('auth.logout')}}">Log out</a>
 </body>

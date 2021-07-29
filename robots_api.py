@@ -2,7 +2,7 @@ from flask import Blueprint, request
 from functools import wraps
 from werkzeug.security import check_password_hash
 from . import db
-from models import Robots
+from .models import Robots
 
 
 robots_api = Blueprint("robots_api", __name__)
@@ -19,7 +19,7 @@ def check_robot_login(func):
             return func(*args, **kwargs)
     return verify_robot
 
-# todo set up @robot_login_required
+
 @robots_api.route("/", methods=["GET", "POST"])
 def index():
     # GET: server responds with synthesis steps - calls synthesis planner
