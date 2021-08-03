@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add robot</title>
+</head>
+<body>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="urgent_notification">
+            {{messages[0]}}
+        </div>
+    {% endif %}
+    {% endwith %}
+    <h3 class='title'>Add a robot to the server</h3>
+    <form method="POST" action="/add_robot">
+        <div class="field">
+            <label for="robot_id">Robot ID (string)</label>
+            <input class="input-field" id="robot_id" name="robot_id" placeholder="Robot ID">
+        </div>
+        <div class="field">
+            <label for="robot_key">Robot pre-shared key</label>
+            <input class="input-field" id="robot_key" name="robot_key" placeholder="Robot Key">
+        </div>
+        <button class="submit-button" type="submit">Add robot</button>
+    </form>
+
+</body>
+</html>

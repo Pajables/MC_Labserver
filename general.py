@@ -3,8 +3,6 @@ from flask import Blueprint, render_template, url_for, request
 from flask_login import login_required, current_user
 from . import db
 
-# file to hold general pages not requiring a login.
-
 general = Blueprint('general', __name__, template_folder='general/templates')
 
 
@@ -13,13 +11,13 @@ def landing():
     return render_template("general/landing.html")
 
 
-@login_required
 @general.route('/index')
+@login_required
 def index():
     if current_user.ADMIN == 1:
-        return render_template('index_admin.html')
+        return render_template('general/index_admin.html')
     else:
-        return render_template('index.html')
+        return render_template('general/index.html')
 
 
 @general.route("/robots", methods=["GET", 'POST'])
@@ -40,19 +38,28 @@ def reactions_display():
     reactions_data = db.session.execute("SELECT * FROM Reaction_Status")
 
     if request.method == 'GET':
-        # todo create a reactions.html file and code for the arrangement of styles for the main page(__init__.py)
-        return render_template('general/reactions.html', reactions_data=reactions_data)
-        # render a template using reactions_list
-        # show links to specific reaction tables
+        return render_template('general/reactions_status.html', reactions_data=reactions_data)
+
+
+@general.route("/add_reaction", methods=['GET', 'POST'])
+@login_required
+def add_reaction():
+    if request.method == "GET":
+        return render_template('general/add_reaction.html')
 
 
 @general.route("/reactions/display", methods=['GET', 'POST'])
 @login_required
 def reaction_table_display():
     # display only entries from specific reaction
-    reaction_data = db.session.execute("SELECT * FROM REACTION_STATUS WHERE REACTION_NAME = 'Aspirin Synthesis' AND REACTION_STATUS ='COMPLETE'")
-
-    if request.method == 'POST':
-        # todo create a reactions/display.html file and code for the arrangement of styles for the main page(__init__.py)
-        return render_template('general/reaction_params.html', reaction_data=reaction_data)
+    reaction = request.args.get('reaction_name')
+    all_reactions = db.session.execute("SELECT REACTION_NAME FROM Reaction_Status")
+    all_reactions = set(all_reactions)
+    if reaction is None:
+        return render_template('general/reaction.html', all_reactions=all_reactions)
+    else:
+        columns = db.session.execute(f"SHOW COLUMNS FROM {reaction}")
+        specific_reaction = db.session.execute(f"SELECT * FROM {reaction}")
+        return render_template('general/reaction.html', all_reactions=all_reactions, reaction_table=specific_reaction,
+                               columns=columns)
 

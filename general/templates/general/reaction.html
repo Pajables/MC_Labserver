@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% for item in all_reactions %}
+    <a href="{{url_for('general.reaction_table_display', reaction_name=item)}}">{{item}}</a>
+    {% endfor %}
+    {% block reaction_table %}
+    {% endblock reaction_table %}
+
+</body>
+</html>
