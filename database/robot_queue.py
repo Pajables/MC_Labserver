@@ -8,23 +8,23 @@ cursor.execute("SELECT VERSION()")
 
 data = cursor.fetchone()
 
-cursor.execute("DROP TABLE IF EXISTS Reactions_Queue")
+cursor.execute("DROP TABLE IF EXISTS Robot_Queue")
 
-sql = """CREATE TABLE UJ_RobotsDB. Reactions_Queue (
+sql = """CREATE TABLE UJ_RobotsDB. Robot_Queue (
    ROBOT_ID VARCHAR(255) NOT NULL,
-   QUEUE_ITEM INT AUTO_INCREMENT,
+   QUEUE_NUM INT AUTO_INCREMENT,
    FILE_NAME TEXT,
    LAST_UPDATE_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-   PRIMARY KEY (QUEUE_ITEM)
+   PRIMARY KEY (QUEUE_NUM)
 )"""
 cursor.execute(sql)
 
-sql = """INSERT INTO Reactions_Queue(ROBOT_ID, QUEUE_ITEM, FILE_NAME)
+sql = """INSERT INTO Robot_Queue(ROBOT_ID, QUEUE_NUM, FILE_NAME)
    VALUES('UJFB1', 0, '/home/MCLabserver/templates')"""
 
 cursor.execute(sql)
 
-query = "SELECT * FROM Reactions_Queue"
+query = "SELECT * FROM Robot_Queue"
 
 cursor.execute(query)
 
