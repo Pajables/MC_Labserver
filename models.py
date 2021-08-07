@@ -13,25 +13,17 @@ class User(UserMixin, db.Model):
         return self.USER_ID
 
 
-class RobotStatus(db.Model):
-    __table__ = db.Model.metadata.tables['Robot_Status']
+class Robots(db.Model):
+    __table__ = db.Model.metadata.tables['Robots']
 
 
 class ReactionStatus(db.Model):
-    __table__ = db.Model.metadata.tables['Reaction_Status']
+    __table__ = db.Model.metadata.tables['Reactions']
 
 
-class ReactionParameters(db.Model):
-    __table__ = db.Model.metadata.tables['Reaction_Parameters']
+class RobotQueue(db.Model):
+    __table__ = db.Model.metadata.tables['Robot_Queue']
 
-
-class UJRobotsCommunication(db.Model):
-    __table__ = db.Model.metadata.tables['UJ_Robots_Communication']
-
-
-# robots model for connection and authentication
-class Robots(db.Model):
-    __table__ = db.Model.metadata.tables['Robots']
 
 # todo add RobotQueue model
 # RobotQueue will be a table that holds references to files containing synthesis steps.

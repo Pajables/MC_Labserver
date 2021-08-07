@@ -14,12 +14,13 @@ sql = """CREATE TABLE UJ_RobotsDB. Users (
    USER_ID INT NOT NULL,
    USERNAME VARCHAR(255) NOT NULL,
    PASSWORD VARCHAR(255) NOT NULL,
+   ADMIN INT NOT NULL
    PRIMARY KEY (USER_ID)
 )"""
 cursor.execute(sql)
 
-sql = """INSERT INTO Users(USER_ID, USERNAME, PASSWORD)
-   VALUES(1, 'test', 'test_pass')"""
+sql = """INSERT INTO Users(USER_ID, USERNAME, PASSWORD, ADMIN)
+   VALUES(1, 'test', 'test_pass', 0)"""
 
 cursor.execute(sql)
 

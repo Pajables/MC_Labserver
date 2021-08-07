@@ -1,6 +1,7 @@
 import MySQLdb
+from connect import db_connect
 
-database = MySQLdb.connect(host="127.0.0.1", user="root", passwd="", db="UJ_RobotsDB")
+database = db_connect()
 
 cursor = database.cursor()
 

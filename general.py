@@ -1,4 +1,4 @@
-# import db_retrieve
+from .utils import split_results
 from flask import Blueprint, render_template, url_for, request
 from flask_login import login_required, current_user
 from . import db
@@ -24,21 +24,28 @@ def index():
 @login_required
 def robots_display():
     # Get robots from database and display in a table
-    robots_data = db.session.execute("SELECT * FROM Robot_Status")
+    robots_data = db.session.execute("""SELECT ROBOT_NAME, IP_ADDRESS, ROBOT_STATUS, CURRENT_JOB, LAST_UPDATE_DATE FROM
+                                     Robots""")
 
     if request.method == "GET":
         return render_template('general/robots_display.html', robots_data=robots_data)
-        # render a template using robots_list
 
 
 @general.route("/reactions", methods=['GET', 'POST'])
 @login_required
 def reactions_display():
     # Get reactions from database and display in a table
-    reactions_data = db.session.execute("SELECT * FROM Reaction_Status")
-
+    reactions_data = db.session.execute("""SELECT ROBOT_NAME, REACTION_NAME, REACTION_STATUS, LAST_UPDATE_DATE, 
+    JOB_COMPLETION_DATE FROM Reactions ORDER BY LAST_UPDATE_DATE DESC""")
+    pages_data, pages = split_results(reactions_data, 1)
     if request.method == 'GET':
-        return render_template('general/reactions_status.html', reactions_data=reactions_data)
+        page_nr = request.args.get('page_nr')
+        if page_nr is None:
+            page_nr = 0
+        else:
+            page_nr = int(page_nr)
+        return render_template('general/reactions_status.html', reactions_data=pages_data[page_nr], cur_page=page_nr,
+                               num_pages=pages)
 
 
 @general.route("/add_reaction", methods=['GET', 'POST'])
@@ -46,6 +53,13 @@ def reactions_display():
 def add_reaction():
     if request.method == "GET":
         return render_template('general/add_reaction.html')
+
+
+@general.route("/queue_reaction", methods=['GET', 'POST'])
+@login_required
+def queue_reaction():
+    if request.method == "GET":
+        return render_template('general/queue_reaction.html')
 
 
 @general.route("/reactions/display", methods=['GET', 'POST'])

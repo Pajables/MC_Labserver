@@ -8,8 +8,6 @@
     <h1>Current reactions status</h1>
     <table>
         <tr>
-            <th>Reaction ID</th>
-            <th>Robot ID</th>
             <th>Robot Name</th>
             <th>Reaction Name</th>
             <th>Reaction Status</th>
@@ -23,12 +21,14 @@
             <td>{{item[2]}}</td>
             <td>{{item[3]}}</td>
             <td>{{item[4]}}</td>
-            <td>{{item[5]}}</td>
-            <td>{{item[6]}}</td>
         </tr>
         {% endfor %}
     </table>
-    <a href="{{url_for('general.reactions_table_display'}}">View all reactions</a>
+    {% for i in range(0, num_pages+1) %}
+    <a href="{{url_for('general.reactions_display', page_nr=i)}}">{{i+1}}</a>
+    {% endfor %}
+    <h3>Page: {{cur_page + 1}}</h3>
+    <a href="{{url_for('general.reaction_table_display')}}">View all reactions</a>
     <a href="{{url_for('general.robots_display')}}"><h2>Robots</h2></a>
     <a href="{{url_for('auth.logout')}}">Log out</a>
 </body>

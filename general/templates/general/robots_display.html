@@ -27,7 +27,8 @@
         {% endfor %}
     </table>
     <a href="{{url_for('general.reactions_display')}}"><h2>Current running reactions</h2></a>
-
+    <a href="{{url_for('general.queue_reaction')}}">Queue a reaction</a>
+    <a href="{{url_for('general.add_reaction')}}">Add a new reaction</a>
     <a href="{{url_for('auth.logout')}}">Log out</a>
 </body>
 </html>
