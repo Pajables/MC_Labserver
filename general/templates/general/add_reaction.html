@@ -21,10 +21,11 @@
                 var form = document.getElementById("form");
                 var new_label = document.createElement("label");
                 new_label.setAttribute("for", "param${num_fields}");
+                form.appendChild(new_label);
                 var new_field = document.createElement("input");
                 new_field.setAttribute("type", "text");
-                new_field.setAttribute("name", "param${num_fields}");
-
+                new_field.id = "param${num_fields}";
+                form.appendChild(new_field);
             }
         </script>
     </form>

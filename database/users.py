@@ -1,6 +1,8 @@
 import MySQLdb
+from connect import db_connect, check_password
+from werkzeug.security import generate_password_hash
 
-database = MySQLdb.connect (host="127.0.0.1", user="root", passwd="", db = "UJ_RobotsDB")
+database = db_connect()
 
 cursor = database.cursor()
 
@@ -10,17 +12,24 @@ data = cursor.fetchone()
 
 cursor.execute("DROP TABLE IF EXISTS Users")
 
+print('Please set up an Admin user for the Flask webserver.',
+      'This admin user will be able to add other admins to the server')
+
+username = input("What is the Admin's username?")
+password = generate_password_hash(check_password(), method='sha256')
+
 sql = """CREATE TABLE UJ_RobotsDB. Users (
    USER_ID INT NOT NULL,
    USERNAME VARCHAR(255) NOT NULL,
    PASSWORD VARCHAR(255) NOT NULL,
-   ADMIN INT NOT NULL
+   ADMIN INT NOT NULL,
    PRIMARY KEY (USER_ID)
 )"""
 cursor.execute(sql)
 
-sql = """INSERT INTO Users(USER_ID, USERNAME, PASSWORD, ADMIN)
-   VALUES(1, 'test', 'test_pass', 0)"""
+sql = f"""INSERT INTO Users(USER_ID, USERNAME, PASSWORD, ADMIN)
+ VALUES(0, '{username}', '{password}', 1)
+ """
 
 cursor.execute(sql)
 
