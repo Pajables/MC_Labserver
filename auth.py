@@ -46,7 +46,7 @@ def requires_admin_rights(func):
 @auth.route('/admin')
 @login_required
 @requires_admin_rights
-def admin():
+def admin_panel():
     return render_template('auth/admin_panel.html', name=current_user.USERNAME)
 
 
@@ -85,7 +85,7 @@ def add_user():
         user = User.query.filter_by(USERNAME=username).first()
 
         if user:
-            flash("That robot is already present on the server")
+            flash("That user is already present on the server")
             return redirect(url_for('auth.add_user'))
         else:
             if admin_flag is not None:

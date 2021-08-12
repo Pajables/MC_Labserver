@@ -1,15 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'general/structure.html' %}
+{% block insert1 %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="urgent_notification">
+                {{messages[0]}}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <h1>Display reaction data</h1>
+    <br>=====================================<br>
+    <h2>Available reactions</h2>
     {% for item in all_reactions %}
-    <a href="{{url_for('general.reaction_table_display', reaction_name=item)}}">{{item}}</a>
+        <a href="{{url_for('general.display_reactions', reaction_name=item )}}">{{item}}</a>
     {% endfor %}
-    {% block reaction_table %}
-    {% endblock reaction_table %}
-
-</body>
-</html>
+    {% if sel_reaction %}
+        <h2>{{reaction_name}}</h2>
+        <table>
+            <tr>
+                {% for param in reaction_params %}
+                <th>{{param}}</th>
+                {% endfor %}
+            </tr>
+            {% for record in reaction_table %}
+            <tr>
+                {% for item in record %}
+                    <td>{{item}}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    <br>=====================================<br>
+    <div id="reaction-options">
+        <a href="{{url_for('general.add_reaction')}}">Add a new reaction</a>
+        <a href="{{url_for('general.manual_input')}}">Manually input reaction data</a>
+        <a href="{{url_for('general.queue_reaction')}}">Queue a reaction</a>
+    </div>
+{% endblock insert1 %}

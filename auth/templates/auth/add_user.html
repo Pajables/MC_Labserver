@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Add robot</title>
-</head>
-<body>
+{% extends 'general/structure.html'}
+{% block insert1 %}
     {% with messages = get_flashed_messages() %}
     {% if messages %}
         <div class="urgent_notification">
@@ -28,6 +23,4 @@
         </div>
         <button class="submit-button" type="submit">Add robot</button>
     </form>
-
-</body>
-</html>
+{% endblock insert1 %}

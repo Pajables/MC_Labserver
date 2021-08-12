@@ -1,0 +1,17 @@
+{% extends 'general/structure.html' %}
+{% block insert1 %}
+    =====================================<br>
+    <table>
+        {% for column in columns %}
+        <th>{{column}}</th>
+        {% endfor %}
+        {% for item in queue_items %}
+        <tr>
+            <td>{{item[0]}}</td>
+            <td>{{item[1]}}</td>
+            <td>{{item[2]}}</td>
+            <td>{{item[3]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock insert1 %}

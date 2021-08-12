@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'general/structure.html' %}
+{% block insert1 %}
     <h1>Current reactions status</h1>
     <table>
         <tr>
@@ -24,12 +19,16 @@
         </tr>
         {% endfor %}
     </table>
-    {% for i in range(0, num_pages+1) %}
-    <a href="{{url_for('general.reactions_display', page_nr=i)}}">{{i+1}}</a>
-    {% endfor %}
-    <h3>Page: {{cur_page + 1}}</h3>
-    <a href="{{url_for('general.reaction_table_display')}}">View all reactions</a>
-    <a href="{{url_for('general.robots_display')}}"><h2>Robots</h2></a>
-    <a href="{{url_for('auth.logout')}}">Log out</a>
-</body>
-</html>
+    <div id="page-count">
+        Pages:
+        {% for i in range(0, num_pages+1) %}
+        <a href="{{url_for('general.display_reactions', page_nr=i)}}">{{i+1}}</a>
+        {% endfor %}
+    </div>
+    <h3>Page {{cur_page + 1}}</h3>
+    <div id="reaction-options">
+        <a href="{{url_for('general.add_reaction')}}">Add a new reaction</a>
+        <a href="{{url_for('general.manual_input')}}">Manually input reaction data</a>
+        <a href="{{url_for('general.queue_reaction')}}">Queue a reaction</a>
+    </div>
+{% endblock insert1 %}

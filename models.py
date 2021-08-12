@@ -18,6 +18,10 @@ class Robots(db.Model):
 
 
 class ReactionStatus(db.Model):
+    __table__ = db.Model.metadata.tables['Reactions_Status']
+
+
+class Reactions(db.Model):
     __table__ = db.Model.metadata.tables['Reactions']
 
 

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add new reaction</title>
+    <script id="main">
+            var num_fields = 11
+            function add_field(){
+                var form = document.getElementById("reaction-parameters");
+                div = document.createElement("div");
+                div.class = "input-parameters";
+                form.appendChild(div);
+                var new_label = document.createElement("label");
+                new_label.for = "param" + num_fields;
+                new_label.innerHTML = "Parameter " + num_fields;
+                div.appendChild(new_label);
+
+                var field1 = create_field("name");
+                var select = create_select();
+
+                div.appendChild(field1);
+                div.innerHTML += select;
+
+                num_fields += 1;
+            }
+
+            function create_field(name){
+                var new_field = document.createElement("input");
+                new_field.type = "text";
+                new_field.class = "input-field";
+                new_field.id = "param" + num_fields + name;
+                new_field.placeholder = "Param " + num_fields + " " + name;
+                return new_field;
+            }
+
+            function create_select(){
+                innerHTML = document.getElementById('inner-select').innerHTML;
+                var name = "param" + num_fields + "units";
+                innerHTML = innerHTML.replace(/{units}/g, name);
+                return innerHTML;
+            }
+    </script>
+    <script id="inner-select">
+        <label for="{units}">Select units</label>
+        <select name="{units}" id="{units}">
+            <optgroup label="Time">
+                <option value="seconds">Seconds</option>
+                <option value="minutes">Minutes</option>
+                <option value="hours">Hours</option>
+            </optgroup>
+            <optgroup label="Volume">
+                <option value="ml">ml</option>
+                <option value="ul">&#956;l</option>
+            </optgroup>
+            <optgroup label="Mass">
+                <option value="g">g</option>
+                <option value="mg">mg</option>
+                <option value="ug">&#956;g</option>
+            </optgroup>
+        </select>
+    </script>
+</head>
+<body>
+    <div class="top-nav">
+        <a class="active-nav" href="{{url_for('general.index')}}">Home</a>
+        <a href="{{url_for('general.robots')}}">Robot status</a>
+        <a href="{{url_for('general.reactions')}}">Reaction status</a>
+        <a href="{{url_for('general.display_reactions')}}">Reaction data</a>
+        <a href="{{url_for('general.queue_reaction')}}">Reaction queue</a>
+        <a href="{{url_for('auth.logout')}}">Log out</a>
+    </div>
+    {% if current_user.ADMIN == 1 %}
+    <div class="admin-nav">
+        <a href="{{url_for('auth.admin_panel')}}">Administrator panel</a>
+    </div>
+    {% endif %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="urgent_notification">
+                {{messages[0]}}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <h1>Add new reaction</h1>
+    <div id="introduction">
+        For the reaction, please specify the reaction name and the reaction parameters. Then, upload a XDL document specifying the reaction steps.
+    </div>
+    <br>=====================================<br>
+    <form method="POST" action="/add_reaction">
+        <div id="reaction-info">
+            <label for="reaction-name">Reaction name</label>
+            <input class="input-field" id="reaction-name" name="reaction-name" placeholder="Reaction name">
+        </div>
+        <br>=====================================<br>
+        <div id="reaction-parameters">
+            {% for i in range(1, 11) %}
+                <div>
+                    <label for="param{{i}}name">Parameter{{i}}</label>
+                    <input class="input-field" id="param{{i}}name" name="param{{i}}name" placeholder="Param {{i}} name">
+                    <label for="param{{i}}units">Select units</label>
+                    <select name=param{{i}}units id=param{{i}}units>
+                        <optgroup label="Time">
+                            <option value="seconds">Seconds</option>
+                            <option value="minutes">Minutes</option>
+                            <option value="hours">Hours</option>
+                        </optgroup>
+                        <optgroup label="Volume">
+                            <option value="ml">ml</option>
+                            <option value="ul">&#956;l</option>
+                        </optgroup>
+                        <optgroup label="Mass">
+                            <option value="g">g</option>
+                            <option value="mg">mg</option>
+                            <option value="ug">&#956;g</option>
+                        </optgroup>
+                    </select>
+                </div>
+            {% endfor %}
+        </div>
+        <br>=====================================<br>
+        <button id="add-field" type="button" onclick="add_field()">Add field</button>
+        <button id="submit-button" type="submit">Submit</button>
+    </form>
+</body>
+</html>

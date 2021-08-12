@@ -1,0 +1,8 @@
+{% extends 'general/structure.html' %}
+    {% block insert1 %}
+        {% for item in all_reactions %}
+            <a href="{{url_for('general.manual_input', reaction_name=item )}}">{{item}}</a>
+        {% endfor %}
+        {% block manual_input %}
+        {% endblock manual_input %}
+    {% endblock insert1 %}

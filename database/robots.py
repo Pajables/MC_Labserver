@@ -1,5 +1,6 @@
 import MySQLdb
 from connect import db_connect
+from werkzeug.security import generate_password_hash
 
 database = db_connect()
 
@@ -24,18 +25,12 @@ sql = """CREATE TABLE UJ_RobotsDB. Robots (
 )"""
 cursor.execute(sql)
 
-sql = """INSERT INTO Robots(ROBOT_ID, ROBOT_KEY,  ROBOT_NAME, IP_ADDRESS, ROBOT_STATUS, CURRENT_JOB, ACTION)
-   VALUES('UJFB1', '#####', 'UJ Fluidic Backbone 1', '192.168.150', 'BUSY', 'Aspirin Synthesis', 1);
-   INSERT INTO Robots(ROBOT_ID, ROBOT_KEY,  ROBOT_NAME, IP_ADDRESS, ROBOT_STATUS, CURRENT_JOB, ACTION)
-   VALUES('UJFB2', '#####', 'UJ Fluidic Backbone 2', '192.168.151', 'ERROR', 'Aspirin Synthesis', 1);
-   INSERT INTO Robots(ROBOT_ID, ROBOT_KEY,  ROBOT_NAME, IP_ADDRESS, ROBOT_STATUS, CURRENT_JOB, ACTION)
-   VALUES('UJFB3','#####', 'UJ Fluidic Backbone 3', '192.168.152', 'OK', 'Aspirin Synthesis', 0);
-   INSERT INTO Robots(ROBOT_ID, ROBOT_KEY,  ROBOT_NAME, IP_ADDRESS, ROBOT_STATUS, CURRENT_JOB, ACTION)
-   VALUES('UJFB4', '#####', 'UJ Fluidic Backbone 4', '192.168.153', 'BUSY', 'None', 0);
-   INSERT INTO Robots(ROBOT_ID, ROBOT_KEY,  ROBOT_NAME, IP_ADDRESS, ROBOT_STATUS, CURRENT_JOB, ACTION)
-   VALUES('UJFB5', '#####', 'UJ Fluidic Backbone 5', '192.168.154', 'ERROR', 'None', 0);
-   INSERT INTO Robots(ROBOT_ID, ROBOT_KEY,  ROBOT_NAME, IP_ADDRESS, ROBOT_STATUS, CURRENT_JOB, ACTION)
-   VALUES('UJFB6', '#####', 'UJ Fluidic Backbone 6', '192.168.155', 'OK', 'None', 1)"""
+raw_key = input("Please enter the secret key for the robot")
+key = generate_password_hash(raw_key, method='sha256')
+
+sql = f"""INSERT INTO Robots(ROBOT_ID, ROBOT_KEY,  ROBOT_NAME, IP_ADDRESS, ROBOT_STATUS, CURRENT_JOB, ACTION)
+    VALUES('UJFB1', '{key}', 'UJ Fluidic Backbone 1', '192.168.150', 'Idle', 'Idle', 0);
+    """
 
 cursor.execute(sql)
 
@@ -52,7 +47,7 @@ cursor.close()
 
 database.commit()
 
-database.close
+database.close()
 
 print("Database version : %s " % data)
 print("UJ Meta-Catalysis Data Inserted Successfully On The UJ Robots Production Database!!!")

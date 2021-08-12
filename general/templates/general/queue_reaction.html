@@ -1,10 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+{% extends "general/structure.html" %}
+{% block insert1 %}
+    =====================================<br>
+    {% for item in all_reactions %}
+    <a href="{{url_for('general.queue_reaction', reaction_name=item )}}">{{item}}</a>
+    {% endfor %}
+    <br>=====================================<br>
+    {% if reaction_params != None and all_robots %}
+        <h2>{{reaction_name}}</h2>
+        <form id="queue-reaction" method="POST" action="/queue_reaction">
+            {% for item in reaction_params %}
+                <div>
+                    <label for="param{{i}}">{{item}}</label>
+                    <input type="text" id="param{{i}}">
+                </div>
+            {% endfor %}
+            <input type="hidden" id="reaction_name" name="reaction_name" value="{{reaction_name}}">
+            <label for="robots">Select a robot</label>
+            <select name="robots" id="robots">
+                {% for robot in all_robots %}
+                    <option value="{{robot[0]}}${{robot[1]}}">{{robot[1]}}</option>
+                {% endfor %}
+            </select>
+        </form>
+    {% endif %}
+    <br>=====================================<br>
+    <div id="reaction-options">
+        <a href="{{url_for('general.add_reaction')}}">Add a new reaction</a>
+        <a href="{{url_for('general.manual_input')}}">Manually input reaction data</a>
+        <a href="{{url_for('general.queue_reaction')}}">Queue a reaction</a>
+    </div>
+{% endblock insert1 %}

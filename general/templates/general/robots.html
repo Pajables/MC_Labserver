@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Robots</title>
-</head>
-<body>
+{% extends 'general/structure.html' %}
+{% block insert1 %}
     <h1>Current attached robots status</h1>
     <table>
         <tr>
@@ -26,9 +21,4 @@
         </tr>
         {% endfor %}
     </table>
-    <a href="{{url_for('general.reactions_display')}}"><h2>Current running reactions</h2></a>
-    <a href="{{url_for('general.queue_reaction')}}">Queue a reaction</a>
-    <a href="{{url_for('general.add_reaction')}}">Add a new reaction</a>
-    <a href="{{url_for('auth.logout')}}">Log out</a>
-</body>
-</html>
+{% endblock insert1 %}

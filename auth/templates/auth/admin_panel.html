@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'general/structure.html' %}
+{% block insert1 %}
     <h1>Admin panel</h1>
     <h2>Hello {{name}}, you are an admin!</h2>
     <a href="{{url_for(auth.add_user}}">Add users</a>
     <a href="{{url_for(auth.add_robot}}">Add robots</a>
     <a href="{{url_for(auth.logout')}}">Log out</a>
-</body>
-</html>
+{% endblock insert1 %}
