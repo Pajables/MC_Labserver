@@ -14,6 +14,7 @@ cursor.execute("DROP TABLE IF EXISTS Reactions")
 sql = """CREATE TABLE UJ_RobotsDB. Reactions (
    REACTION_NAME VARCHAR(255) NOT NULL,
    TABLE_NAME VARCHAR(255) NOT NULL,
+   FILE_NAME TEXT NOT NULL,
    PRIMARY KEY (REACTION_NAME)
 )"""
 cursor.execute(sql)

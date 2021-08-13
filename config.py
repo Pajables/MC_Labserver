@@ -8,6 +8,8 @@ TESTING = True
 DEBUG = True
 FLASK_ENV = 'development'
 SECRET_KEY = environ.get('SECRET_KEY')
+MAX_CONTENT_LENGTH = 10 * 1000 * 1000
+ALLOWED_EXTENSIONS = {'json', 'xdl', 'png'}
 STATIC_FOLDER = 'static'
 TEMPLATES_FOLDER = 'templates'
 

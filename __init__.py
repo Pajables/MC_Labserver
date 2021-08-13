@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
@@ -8,6 +9,9 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
     app.config.from_pyfile('config.py')
+    app_root = os.path.dirname(os.path.abspath(__file__))
+    app.config['UPLOAD_FOLDER'] = os.path.join(app_root, 'uploads')
+    app.config['PROTOCOL_FOLDER'] = os.path.join(app.config['UPLOAD_FOLDER'], 'reaction_protocols')
     db.init_app(app)
 
     with app.app_context():

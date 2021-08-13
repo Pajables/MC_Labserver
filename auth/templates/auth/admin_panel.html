@@ -2,7 +2,7 @@
 {% block insert1 %}
     <h1>Admin panel</h1>
     <h2>Hello {{name}}, you are an admin!</h2>
-    <a href="{{url_for(auth.add_user}}">Add users</a>
-    <a href="{{url_for(auth.add_robot}}">Add robots</a>
-    <a href="{{url_for(auth.logout')}}">Log out</a>
+    <a href="{{url_for('auth.add_user')}}">Add users</a>
+    <a href="{{url_for('auth.add_robot')}}">Add robots</a>
+    <a href="{{url_for('auth.logout')}}">Log out</a>
 {% endblock insert1 %}

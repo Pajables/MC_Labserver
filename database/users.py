@@ -27,8 +27,10 @@ sql = """CREATE TABLE UJ_RobotsDB. Users (
 )"""
 cursor.execute(sql)
 
+# User id 0 is reserved for the synthesis planner script
+
 sql = f"""INSERT INTO Users(USER_ID, USERNAME, PASSWORD, ADMIN)
- VALUES(0, '{username}', '{password}', 1)
+ VALUES(1, '{username}', '{password}', 1)
  """
 
 cursor.execute(sql)

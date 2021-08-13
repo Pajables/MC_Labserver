@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, url_for, request, redirect, flash
 from flask_login import login_required, current_user
 from sqlalchemy import exc
 from . import db
+from . import models
 
 general = Blueprint('general', __name__, template_folder='general/templates')
 
@@ -35,14 +36,16 @@ def robots():
 @general.route("/reactions", methods=['GET', 'POST'])
 @login_required
 def reactions():
-    # Get reactions from database and display in a table
-    reactions_data = db.session.execute("""SELECT ROBOT_NAME, REACTION_NAME, REACTION_STATUS, LAST_UPDATE_DATE, 
-    JOB_COMPLETION_DATE FROM Reactions_Status ORDER BY LAST_UPDATE_DATE DESC""")
-    num_pages = request.args.get('num_pages')
-    if num_pages is None:
-        num_pages = 20
-    pages_data, pages = utils.split_results(reactions_data, num_pages)
     if request.method == 'GET':
+        # Get reactions from database and display in a table
+        reactions_data = db.session.execute("""SELECT ROBOT_NAME, REACTION_NAME, REACTION_STATUS, LAST_UPDATE_DATE, 
+            JOB_COMPLETION_DATE FROM Reactions_Status ORDER BY LAST_UPDATE_DATE DESC""")
+        results_per_page = request.args.get('results_per_page')
+        if results_per_page is None:
+            results_per_page = 20
+        pages_data, pages = utils.split_results(reactions_data, results_per_page)
+        if not pages_data:
+            return render_template('general/reactions_status.html', num_pages=0)
         page_nr = request.args.get('page_nr')
         if page_nr is None:
             page_nr = 0
@@ -57,11 +60,12 @@ def reactions():
 def display_reactions():
     reaction_name = request.args.get('reaction_name')
     all_reactions = utils.get_avail_reactions(db)
+    all_reactions = [item for item in set(all_reactions)]
     if reaction_name is None:
         return render_template('general/reaction.html', all_reactions=all_reactions, sel_reaction=False)
     else:
         try:
-            table_name, reaction_params = utils.get_reaction_params(db, reaction_name)
+            table_name, reaction_params = utils.get_reaction_params(db, reaction_name, True)
             specific_reaction = db.session.execute(f"SELECT * FROM {table_name};")
             return render_template('general/reaction.html', all_reactions=all_reactions, sel_reaction=True,
                                    reaction_name=reaction_name, reaction_params=reaction_params, reaction_table=specific_reaction)
@@ -77,17 +81,19 @@ def add_reaction():
         return render_template('general/reaction_add.html')
     elif request.method == "POST":
         reaction_name, parameters = utils.process_reaction_form(request.form)
+        filename = utils.upload_protocol(request)
         table_name = reaction_name.replace(" ", "_")
         table_name = table_name.upper()
-        sql = f"CREATE TABLE IF NOT EXISTS {table_name} ("
+        all_reactions = utils.get_avail_reactions(db)
+        all_reactions = [item for item in set(all_reactions)]
+        sql = f"CREATE TABLE IF NOT EXISTS {table_name} (REACTION_ID INT AUTO_INCREMENT, "
         for parameter in parameters:
             sql += parameter[0] + " " + parameter[1] + ", "
-        sql = sql[:-2]
-        sql += ");"
+        sql += "PRIMARY KEY (REACTION_ID));"
         try:
             db.session.execute(sql)
-            sql = f'''INSERT INTO Reactions (REACTION_NAME, TABLE_NAME) 
-            VALUES ('{reaction_name}', '{table_name}');'''
+            sql = f'''INSERT INTO Reactions (REACTION_NAME, TABLE_NAME, FILE_NAME) 
+            VALUES ('{reaction_name}', '{table_name}', '{filename}');'''
             db.session.execute(sql)
             db.session.commit()
             flash(f"Successfully added table {table_name}")
@@ -137,8 +143,36 @@ def queue_reaction():
         if reaction_name is None:
             return render_template('general/queue_reaction.html', all_reactions=all_reactions, sel_reaction=False)
         else:
-            table_name, reaction_params = utils.get_reaction_params(db, reaction_name)
+            table_name, reaction_params = utils.get_reaction_params(db, reaction_name, True)
             all_robots = utils.get_avail_robots(db)
-            return render_template('general/queue_reaction.html', all_reactions=all_reactions, sel_reaction=True, reaction_name=reaction_name, reaction_params=reaction_params)
+            return render_template('general/queue_reaction.html', all_reactions=all_reactions, sel_reaction=True, reaction_name=reaction_name, reaction_params=reaction_params, all_robots=all_robots)
     elif request.method == "POST":
-        utils.process_queue_form(request.form)
+        reaction_name, robot, parameters = utils.process_queue_form(request.form)
+        table_name, reaction_params = utils.get_reaction_params(db, reaction_name, False)
+        if parameters and robot:
+            try:
+                reaction_id = db.session.execute(
+                    f"SELECT REACTION_ID FROM {table_name} WHERE REACTION_ID=(SELECT MAX(USER_ID) FROM {table_name}") + 1
+                queued_item = models.RobotQueue(USER_ID=current_user.USER_ID, ROBOT_ID=robot[0], REACTION_NAME=reaction_name, REACTION_ID=reaction_id)
+                db.session.add(queued_item)
+                sql_pre = f"INSERT INTO {table_name} ("
+                sql_post = f" VALUES ("
+                for i in range(len(reaction_params)):
+                    sql_pre += f"{reaction_params[i]}, "
+                    sql_post += f"{parameters}, "
+                sql_pre = sql_pre[:-2]
+                sql_post = sql_post[:-2]
+                sql_pre += ")"
+                sql_post += ");"
+                db.session.execute(sql_pre + sql_post)
+                reaction_status = models.ReactionStatus(REACTION_ID=reaction_id, ROBOT_ID=robot[0], ROBOT_NAME=robot[1], REACTION_NAME=reaction_name, REACTION_STATUS="QUEUED", TABLE_NAME=table_name)
+                db.session.add(reaction_status)
+                db.session.commit()
+                flash(f"Successfully queued {reaction_name}")
+                return redirect(url_for('general.queue_reaction'))
+            except exc.ProgrammingError as e:
+                flash("Query failed: " + str(e))
+                return redirect(url_for('general.queue_reaction'))
+        flash(f"")
+        return redirect(url_for('general.queue_reaction'))
+

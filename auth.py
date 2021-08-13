@@ -63,13 +63,13 @@ def add_robot():
 
         if robot:
             flash("That robot is already present in the database")
-            return redirect(url_for('auth.add_robot'))
+            return render_template('auth/add_robot')
         else:
             new_robot = Robots(ROBOT_ID=robot_id, ROBOT_KEY=generate_password_hash(robot_key, method='sha256'))
             db.session.add(new_robot)
             db.session.commit()
             flash(f"Robot {robot_id} added successfully")
-            return redirect(url_for('auth.add_robot'))
+            return render_template('auth/add_robot')
 
 
 @auth.route('/admin/add_user', methods=['GET', 'POST'])
@@ -83,17 +83,20 @@ def add_user():
         password = request.form.get('password')
         admin_flag = request.form.get('admin_check')
         user = User.query.filter_by(USERNAME=username).first()
-
         if user:
             flash("That user is already present on the server")
-            return redirect(url_for('auth.add_user'))
+            return render_template('auth/add_user.html')
         else:
             if admin_flag is not None:
                 admin_flag = 1
             else:
                 admin_flag = 0
             last_id = db.session.execute('SELECT USER_ID FROM Users WHERE USER_ID=(SELECT MAX(USER_ID) FROM Users)')
-            new_user = User(USER_ID=last_id+1, USERNAME=username,
+            last_id = last_id.fetchone()
+            new_user = User(USER_ID=last_id[0]+1, USERNAME=username,
                             PASSWORD=generate_password_hash(password, method='sha256'), ADMIN=admin_flag)
             db.session.add(new_user)
             db.session.commit()
+            flash(f'Successfully added user {username}')
+            return render_template('auth/add_user.html')
+

@@ -86,7 +86,7 @@
         For the reaction, please specify the reaction name and the reaction parameters. Then, upload a XDL document specifying the reaction steps.
     </div>
     <br>=====================================<br>
-    <form method="POST" action="/add_reaction">
+    <form method="POST" enctype="multipart/form-data" action="/add_reaction">
         <div id="reaction-info">
             <label for="reaction-name">Reaction name</label>
             <input class="input-field" id="reaction-name" name="reaction-name" placeholder="Reaction name">
@@ -116,6 +116,10 @@
                     </select>
                 </div>
             {% endfor %}
+        </div>
+        <div id="reaction-protocol">
+            <label for="protocol">Please upload a protocol file (json or XDL)</label>
+            <input type="file" id="protocol" name="protocol">
         </div>
         <br>=====================================<br>
         <button id="add-field" type="button" onclick="add_field()">Add field</button>
