@@ -65,10 +65,13 @@ def display_reactions():
         return render_template('general/reaction.html', all_reactions=all_reactions, sel_reaction=False)
     else:
         try:
-            table_name, reaction_params = utils.get_reaction_params(db, reaction_name, True)
+            form_output = utils.get_reaction_params(db, reaction_name, True)
+            table_name = form_output["table_name"]
+            reaction_params = form_output["reaction_params"]
+            results=form_output["results"]
             specific_reaction = db.session.execute(f"SELECT * FROM {table_name};")
             return render_template('general/reaction.html', all_reactions=all_reactions, sel_reaction=True,
-                                   reaction_name=reaction_name, reaction_params=reaction_params, reaction_table=specific_reaction)
+                                   reaction_name=reaction_name, reaction_params=reaction_params, reaction_table=specific_reaction, results=results)
         except exc.ProgrammingError as e:
             flash("Query failed: " + str(e))
             return redirect(url_for('general.display_reactions'))
@@ -79,16 +82,21 @@ def display_reactions():
 def add_reaction():
     if request.method == "GET":
         return render_template('general/reaction_add.html')
-    elif request.method == "POST":
-        reaction_name, parameters = utils.process_reaction_form(request.form)
+    elif request.method == "POST": 
+        form_output = utils.process_reaction_form(request.form)
+        reaction_name = form_output["reaction_name"]
+        parameters = form_output["reaction_parameters"]
+        results = form_output["results"]
         filename = utils.upload_protocol(request)
         table_name = reaction_name.replace(" ", "_")
         table_name = table_name.upper()
         all_reactions = utils.get_avail_reactions(db)
         all_reactions = [item for item in set(all_reactions)]
-        sql = f"CREATE TABLE IF NOT EXISTS {table_name} (REACTION_ID INT AUTO_INCREMENT, "
+        sql = f"CREATE TABLE IF NOT EXISTS {table_name} (REACTION_ID INT, "
         for parameter in parameters:
             sql += parameter[0] + " " + parameter[1] + ", "
+        for result in results:
+            sql += result + ", "
         sql += "PRIMARY KEY (REACTION_ID));"
         try:
             db.session.execute(sql)
@@ -143,23 +151,32 @@ def queue_reaction():
         if reaction_name is None:
             return render_template('general/queue_reaction.html', all_reactions=all_reactions, sel_reaction=False)
         else:
-            table_name, reaction_params = utils.get_reaction_params(db, reaction_name, True)
+            form_output = utils.get_reaction_params(db, reaction_name, True)
+            table_name = form_output["table_name"]
+            reaction_params = form_output["reaction_parameters"]
             all_robots = utils.get_avail_robots(db)
             return render_template('general/queue_reaction.html', all_reactions=all_reactions, sel_reaction=True, reaction_name=reaction_name, reaction_params=reaction_params, all_robots=all_robots)
     elif request.method == "POST":
-        reaction_name, robot, parameters = utils.process_queue_form(request.form)
-        table_name, reaction_params = utils.get_reaction_params(db, reaction_name, False)
+        reaction_name = request.form.get("reaction_name")
+        form_output = utils.get_reaction_params(db, reaction_name, False)
+        table_name = form_output["table_name"]
+        reaction_params = form_output["reaction_parameters"]
+        robot, parameters = utils.process_queue_form(request.form, reaction_params)
         if parameters and robot:
             try:
                 reaction_id = db.session.execute(
-                    f"SELECT REACTION_ID FROM {table_name} WHERE REACTION_ID=(SELECT MAX(USER_ID) FROM {table_name}") + 1
+                    f"SELECT REACTION_ID FROM {table_name} WHERE REACTION_ID=(SELECT MAX(REACTION_ID) FROM {table_name})").fetchone()
+                if reaction_id is None:
+                    reaction_id = 1
+                else:
+                    reaction_id = reaction_id[0] + 1
                 queued_item = models.RobotQueue(USER_ID=current_user.USER_ID, ROBOT_ID=robot[0], REACTION_NAME=reaction_name, REACTION_ID=reaction_id)
                 db.session.add(queued_item)
                 sql_pre = f"INSERT INTO {table_name} ("
                 sql_post = f" VALUES ("
                 for i in range(len(reaction_params)):
                     sql_pre += f"{reaction_params[i]}, "
-                    sql_post += f"{parameters}, "
+                    sql_post += f"{parameters[i]}, "
                 sql_pre = sql_pre[:-2]
                 sql_post = sql_post[:-2]
                 sql_pre += ")"

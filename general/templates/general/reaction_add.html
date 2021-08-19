@@ -40,7 +40,7 @@
                 return innerHTML;
             }
     </script>
-    <script id="inner-select">
+    <div style="display: none" id="inner-select">
         <label for="{units}">Select units</label>
         <select name="{units}" id="{units}">
             <optgroup label="Time">
@@ -58,7 +58,7 @@
                 <option value="ug">&#956;g</option>
             </optgroup>
         </select>
-    </script>
+    </div>
 </head>
 <body>
     <div class="top-nav">
@@ -116,6 +116,23 @@
                     </select>
                 </div>
             {% endfor %}
+        </div>
+        <div id="results">
+            <div id="result1">
+                <label for="results1">Results 1</label>
+                <input class="input-field" id="results1" name="results1">
+                <input class="input-field" id="results1units" name="results1units">
+            </div>
+            <div id="result2">
+                <label for ="results2">Results 2</label>
+                <input class="input-field" id="results2" name="results2">
+                <input class="input-field" id="results2units" name="results2units">
+            </div>
+            <div id="result3">
+                <label for="results3">Results 3</label>
+                <input class="input-field" id="results3" name="results3">
+                <input class="input-field" id="results3units" name="results3units">
+            </div>
         </div>
         <div id="reaction-protocol">
             <label for="protocol">Please upload a protocol file (json or XDL)</label>

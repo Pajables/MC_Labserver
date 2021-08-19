@@ -2,7 +2,7 @@ from flask import current_app, redirect, flash
 from werkzeug.utils import secure_filename
 import os
 
-unit_db_map = {"seconds" : "INT", "minutes": "DOUBLE", "hours": "DOUBLE",
+unit_db_map = {"seconds": "INT", "minutes": "DOUBLE", "hours": "DOUBLE",
                "ml": "DOUBLE", "ul": "DOUBLE",
                "g": "DOUBLE", "mg": "DOUBLE", "ug": "DOUBLE"}
 
@@ -52,17 +52,17 @@ def split_results(data, results_per_page):
     return split_data, i
 
 
-def process_queue_form(form):
+def process_queue_form(form, reaction_params):
     """
     Gets all form data for queuing a reaction
+    :param reaction_params:
     :param form: Flask.Request.form
     :return: reaction_name - the name of the reaction, parameters - the values of the submitted parameters
     """
     parameters = []
-    reaction_name = form.get('reaction_name')
     robot = form.get('robot')
     if robot is None:
-        return reaction_name, robot, parameters
+        return robot, parameters
     else:
         robot = robot.split('$')
     param_no = 0
@@ -72,11 +72,17 @@ def process_queue_form(form):
         if param is None:
             break
         elif param == "":
-            return reaction_name, robot, []
+            return robot, []
         else:
+            param_units = reaction_params[param_no].split("$$")[1]
+            units = unit_db_map[param_units]
+            if units == 'DOUBLE':
+                param = float(param)
+            elif units == 'INT':
+                param = int(param)
             parameters.append(param)
         param_no += 1
-    return reaction_name, robot, parameters
+    return robot, parameters
 
 
 def get_avail_robots(db):
@@ -104,7 +110,7 @@ def process_reaction_form(form):
             break
         elif param_units is None:
             param_units = "None"
-            table_units = "VARCHAR(255)"
+            table_units = "TEXT"
         else:
             table_units = unit_db_map[param_units]
         param_name = param_name + "$$" + param_units
@@ -112,7 +118,17 @@ def process_reaction_form(form):
         parameters.append(parameter)
         param_no += 1
         add_column_formatting(parameters)
-    return reaction_name, parameters
+    for i in range(3):
+        results = []
+        results_name = form.get(f"results{i}")
+        results_units = form.get(f"results{i}units")
+        if results_name is None:
+            continue
+        elif results_units is None:
+            results.append(results_name + "$result$")
+        else:
+            results.append(results_name + "$result$" + results_units)
+    return {"reaction_name": reaction_name, "reaction_parameters": parameters, "results": results}
 
 
 def get_avail_reactions(db):
@@ -137,13 +153,18 @@ def get_reaction_params(db, reaction_name, pretty=True):
     table_name = reaction_name.replace(" ", "_")
     table_name = table_name.upper()
     reaction_params = []
+    results = []
     columns = db.session.execute(f"SHOW COLUMNS FROM {table_name}")
     columns.fetchone()
     for item in columns:
-        reaction_params.append(item[0])
+        if "$result$" in item:
+            results.append[item]
+        else:
+            reaction_params.append(item[0])
     if pretty:
-        remove_column_formatting(reaction_params)
-    return table_name, reaction_params
+        remove_column_formatting(reaction_params, "$$")
+        remove_column_formatting(results, "$result$")
+    return {"table_name": table_name, "reaction_params": reaction_params, "results": results}
 
 
 def add_column_formatting(columns):
@@ -155,13 +176,13 @@ def add_column_formatting(columns):
         columns[i][0] = columns[i][0].replace(" ", "_")
 
 
-def remove_column_formatting(columns):
+def remove_column_formatting(columns, split_term):
     """
     Formats column headings for legibility on HTML pages
     :param columns: list of column headings
     """
     for i in range(len(columns)):
-        words = columns[i].split("$$")
+        words = columns[i].split(split_term)
         if len(words) > 1:
             unit = words[1]
             name = words[0]

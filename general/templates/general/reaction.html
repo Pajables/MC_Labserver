@@ -17,8 +17,12 @@
         <h2>{{reaction_name}}</h2>
         <table>
             <tr>
+                <th>Reaction ID</th>
                 {% for param in reaction_params %}
                 <th>{{param}}</th>
+                {% endfor %}
+                {% for result in results %}
+                <th>result</th>
                 {% endfor %}
             </tr>
             {% for record in reaction_table %}

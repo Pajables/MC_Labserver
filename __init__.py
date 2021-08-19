@@ -2,15 +2,16 @@ import os
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from . import synthesis_planner
 
 db = SQLAlchemy()
-
+synth_planner = synthesis_planner.SynthesisPlanner()
 
 def create_app():
     app = Flask(__name__)
     app.config.from_pyfile('config.py')
     app_root = os.path.dirname(os.path.abspath(__file__))
-    app.config['UPLOAD_FOLDER'] = os.path.join(app_root, 'uploads')
+    app.config['UPLOAD_FOLDER'] = os.path.join(app_root, 'static/uploads')
     app.config['PROTOCOL_FOLDER'] = os.path.join(app.config['UPLOAD_FOLDER'], 'reaction_protocols')
     db.init_app(app)
 
@@ -34,6 +35,6 @@ def create_app():
     app.register_blueprint(general)
 
     from .robots_api import robots_api
-    app.register_blueprint(robots_api, url_prefix='/api')
+    app.register_blueprint(robots_api, url_prefix='/robots_api')
 
     return app
