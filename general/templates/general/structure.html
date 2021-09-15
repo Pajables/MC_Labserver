@@ -3,20 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>MC_Labserver 0.2</title>
-    <style>
-        table, th, td {
-            border: 1px solid black;
-            border-collapse: collapse;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/css/structure.css">
 </head>
 <body>
     <div class="top-nav">
-        <a class="active-nav" href="{{url_for('general.index')}}">Home</a>
+        <a id="active-nav" href="{{url_for('general.index')}}">Home</a>
         <a href="{{url_for('general.robots')}}">Robot status</a>
         <a href="{{url_for('general.reactions')}}">Reactions status</a>
-        <a href="{{url_for('general.display_reactions')}}">Reaction-specific data</a>
         <a href="{{url_for('general.show_queue')}}">Reaction queue</a>
+        <a href="{{url_for('general.display_reactions')}}">Reaction-specific data</a>
         <a href="{{url_for('auth.logout')}}">Log out</a>
     </div>
     {% if current_user.ADMIN == 1 %}

@@ -1,10 +1,11 @@
 from flask import current_app, redirect, flash
 from werkzeug.utils import secure_filename
 import os
+import sys
 
 unit_db_map = {"seconds": "INT", "minutes": "DOUBLE", "hours": "DOUBLE",
-               "ml": "DOUBLE", "ul": "DOUBLE",
-               "g": "DOUBLE", "mg": "DOUBLE", "ug": "DOUBLE"}
+               "ml": "DOUBLE", "ul": "DOUBLE", "g": "DOUBLE", "mg": "DOUBLE",
+                "ug": "DOUBLE", "°C": "DOUBLE", "K": "DOUBLE"}
 
 
 def allowed_file(filename):
@@ -48,7 +49,7 @@ def split_results(data, results_per_page):
         i += 1
     if len(rows) > 0:
         split_data.append(rows)
-
+        i = 1
     return split_data, i
 
 
@@ -82,8 +83,18 @@ def process_queue_form(form, reaction_params):
                 param = int(param)
             parameters.append(param)
         param_no += 1
-    return robot, parameters
+    return {"robot": robot, "parameters": parameters}
 
+def process_manual_input(form, reaction_params, num_params):
+    parameters = []
+    print(reaction_params, file=sys.stderr)
+    for i in range(num_params):
+        param = form.get(f'param{i}')
+        if param is None or param == "":
+            continue
+        else:
+            parameters.append((reaction_params[i], param))
+    return parameters
 
 def get_avail_robots(db):
     all_robots = db.session.execute("SELECT ROBOT_ID, ROBOT_NAME FROM Robots")
@@ -98,6 +109,7 @@ def process_reaction_form(form):
     :return: reaction_name - string reaction name, parameters - list [['param_name', 'MySQLunits']...]
     """
     parameters = []
+    results = []
     reaction_name = form.get("reaction-name")
     param_no = 1
     while True:
@@ -119,16 +131,16 @@ def process_reaction_form(form):
         param_no += 1
         add_column_formatting(parameters)
     for i in range(3):
-        results = []
         results_name = form.get(f"results{i}")
         results_units = form.get(f"results{i}units")
-        if results_name is None:
+        if results_name is None or results_name == "":
             continue
         elif results_units is None:
-            results.append(results_name + "$result$")
+            results.append([results_name + "$result$", "FLOAT"])
         else:
-            results.append(results_name + "$result$" + results_units)
-    return {"reaction_name": reaction_name, "reaction_parameters": parameters, "results": results}
+            table_units = unit_db_map[results_units]
+            results.append([results_name + '$result$' + results_units, table_units])
+    return {"reaction_name": reaction_name, "reaction_params": parameters, "results": results}
 
 
 def get_avail_reactions(db):
@@ -155,11 +167,10 @@ def get_reaction_params(db, reaction_name, pretty=True):
     reaction_params = []
     results = []
     columns = db.session.execute(f"SHOW COLUMNS FROM {table_name}")
-    columns.fetchone()
     for item in columns:
-        if "$result$" in item:
-            results.append[item]
-        else:
+        if "$result$" in item[0]:
+            results.append(item[0])
+        elif "$$" in item[0]:
             reaction_params.append(item[0])
     if pretty:
         remove_column_formatting(reaction_params, "$$")

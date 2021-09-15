@@ -1,13 +1,23 @@
 {% extends 'general/structure.html' %}
 {% block insert1 %}
+{% with messages = get_flashed_messages() %}
+<div class="urget_notification">
+{% for message in messages %}
+    {{message}}
+{% endfor %}
+</div>
+{% endwith %}
     <h1>Current attached robots status</h1>
     <table>
-        <tr>
+        <tr class="table-headers">
+            <th>Robot ID</th>
             <th>Robot Name</th>
             <th>IP address</th>
             <th>Robot status</th>
             <th>Current Job</th>
+            <th>Execution</th>
             <th>Last update</th>
+            <th colspan="2">Start/stop execution</th>
         </tr>
         {% for item in robots_data %}
         <tr>
@@ -16,6 +26,14 @@
             <td>{{item[2]}}</td>
             <td>{{item[3]}}</td>
             <td>{{item[4]}}</td>
+            {% if item[5] %}
+                <td>Run ({{item[5]}})</td>
+            {% else %}
+                <td>Stop ({{item[5]}})</td>
+            {% endif %}
+            <td>{{item[6]}}</td>
+            <td><a href="{{url_for('general.execute', robot_id=item[0], cmd='1')}}">Go</a></td>
+            <td><a href="{{url_for('general.execute', robot_id=item[0], cmd='0')}}">Stop</a></td>
         </tr>
         {% endfor %}
     </table>

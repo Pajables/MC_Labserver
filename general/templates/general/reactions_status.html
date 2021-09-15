@@ -6,7 +6,8 @@
     {% if num_pages > 0 %}
         <h1>Current reactions status</h1>
         <table>
-            <tr>
+            <tr class="table-headers">
+                <th>Reaction ID</th>
                 <th>Robot Name</th>
                 <th>Reaction Name</th>
                 <th>Reaction Status</th>
@@ -16,24 +17,24 @@
             {% for item in reactions_data %}
             <tr>
                 <td>{{item[0]}}</td>
-                <td>{{item[1]}}</td>
                 <td>{{item[2]}}</td>
                 <td>{{item[3]}}</td>
                 <td>{{item[4]}}</td>
+                <td>{{item[6]}}</td>
+                <td>{{item[7]}}</td>
             </tr>
             {% endfor %}
         </table>
         <div id="page-count">
             Pages:
-            {% for i in range(0, num_pages+1) %}
-            <a href="{{url_for('general.display_reactions', page_nr=i)}}">{{i+1}}</a>
+            {% for i in range(0, num_pages) %}
+            <a href="{{url_for('general.reactions', page_nr=i)}}">{{i+1}}</a>
             {% endfor %}
         </div>
-        <h3>Page {{cur_page + 1}}</h3>
+        <h3>Current page: {{cur_page + 1}}</h3>
     {% endif %}
     <div id="reaction-options">
         <a href="{{url_for('general.add_reaction')}}">Add a new reaction</a>
-        <a href="{{url_for('general.manual_input')}}">Manually input reaction data</a>
         <a href="{{url_for('general.queue_reaction')}}">Queue a reaction</a>
     </div>
 {% endblock insert1 %}

@@ -7,5 +7,18 @@
             </div>
         {% endif %}
     {% endwith %}
-    Index
+    Welcome. Use the menu buttons above to:
+    <ul>
+        <li>Check attached robots status</li>
+        <li>Check reaction status</li>
+        <li>Get data for specific reaction classes</li>
+        <li>Check the queue and add reactions to the queue</li>
+    </ul>
+    This server uses the following workflow:
+    <ol>
+        <li>Reaction-specific data page: Add a new reaction class. Here you specify the reaction parameters that are of interest for the reaction, what results will be collected, and also upload an XDL document that corresponds to the reaction. This information is used to update the supplied XDL document</li>
+        <li>Reaction queue page: Queue a new reaction for this class by entering the parameters for the reaction. Queueing a new reaction will add entries to the reaction status, reaction queue, and reaction-specific data pages.</li>
+        <li>Robot status page: Check whether the robot is currently set to run or not. From this page you can begin the reaction by instructing the robot to start. </li>
+    </ol>
+    Reaction data can be added to the server manually using the Manual input page, found from the Reaction-specific data page. From this page you can also add reaction results. 
 {% endblock insert1 %}

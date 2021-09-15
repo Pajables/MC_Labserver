@@ -12,7 +12,7 @@ data = cursor.fetchone()
 cursor.execute("DROP TABLE IF EXISTS Reactions_Status")
 
 sql = """CREATE TABLE UJ_RobotsDB. Reactions_Status (
-   REACTION_ID INT AUTO_INCREMENT,
+   REACTION_ID INT,
    ROBOT_ID VARCHAR(255) NOT NULL,
    ROBOT_NAME VARCHAR(255) NOT NULL,
    REACTION_NAME VARCHAR(255) NOT NULL,
