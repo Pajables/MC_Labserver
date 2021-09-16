@@ -1,4 +1,4 @@
-from __init__ import create_app
+from MC_Labserver import create_app
 
 app = create_app()
 

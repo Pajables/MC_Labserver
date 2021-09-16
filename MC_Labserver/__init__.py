@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
-import synthesis_planner
+from . import synthesis_planner
 
 db = SQLAlchemy()
 synth_planner = synthesis_planner.SynthesisPlanner()
