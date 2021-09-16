@@ -32,6 +32,10 @@ def  requires_robot_login(func):
 def index():
     # GET: server responds with synthesis steps - calls synthesis planner
     # POST: server updates relevant tables (robot_status, reaction_status, etc)
+    json_args = request.get_json()
+    robot_id = json_args.get('robot_id')
+    robot = Robots.query.filter_by(ROBOT_ID=robot_id).first()
+    robot.IP_ADDRESS = json_args.get('ip')
     return {'conn_status': 'accepted'}
 
 @robots_api.route("/status", methods=['GET','POST'])
@@ -43,12 +47,17 @@ def status():
     cmd = json_args.get('cmd')
     if request.method == 'POST':
         if cmd == "robot_status":
-            robot.ROBOT_STATUS = json_args.get('robot_status')
+            robot_status = json_args.get('robot_status')
+            robot.ROBOT_STATUS = robot_status
+            if robot_status == "ERROR":
+                robot.ERROR_STATE = 1
             db.session.commit()
             return {'robot_status': 'updated'}
     elif request.method == "GET":
         if cmd == "robot_execute":
             return {"action": robot.EXECUTE}
+        elif cmd == "error_state":
+            return {"error_state": robot.ERROR_STATE}
     return {"conn_status": "refused"}
 
 @robots_api.route('/reaction', methods=['GET'])

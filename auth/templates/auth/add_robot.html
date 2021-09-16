@@ -8,15 +8,33 @@
         {% endif %}
     {% endwith %}
     <h3 class='title'>Add a robot to the server</h3>
-    <form method="POST" action="/add_robot">
-        <div class="field">
-            <label for="robot_id">Robot ID (string)</label>
-            <input class="input-field" id="robot_id" name="robot_id" placeholder="Robot ID">
-        </div>
-        <div class="field">
-            <label for="robot_key">Robot pre-shared key</label>
-            <input class="input-field" id="robot_key" name="robot_key" placeholder="Robot Key">
-        </div>
+    <form method="POST" action="/admin/add_robot">
+        <table id="form-table">
+            <tr>
+                <td>
+                    <label for="robot_id">Robot ID (string)</label>
+                </td>
+                <td>
+                    <input class="input-field" id="robot_id" name="robot_id" placeholder="Robot ID">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="robot-name">Robot name</label>
+                </td>
+                <td>
+                    <input class="input-field" id="robot_name" name="robot_name" placeholder="Robot Name">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="robot_key">Robot pre-shared key</label>
+                </td>
+                <td>
+                    <input class="input-field" id="robot_key" name="robot_key" placeholder="Robot Key">
+                </td>
+            </tr>
+        </table>
         <button class="submit-button" type="submit">Add robot</button>
     </form>
 {% endblock insert1 %}

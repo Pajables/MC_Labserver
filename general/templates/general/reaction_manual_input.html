@@ -11,7 +11,7 @@
         <h2>Leave blank to leave item unchanged</h2>
         <h2>Parameters for {{reaction_name}}:</h2>
             <form method="POST" action="/manual_input">
-                <table id="manual-input-table">
+                <table class="form-table">
                     {% for i in range(0, reaction_params | length) %}
                     <tr>
                         <td>

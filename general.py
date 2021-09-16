@@ -33,6 +33,15 @@ def robots():
     if request.method == "GET":
         return render_template('general/robots.html', robots_data=robots_data)
 
+@general.route("/robots/clear_error", methods=["GET"])
+@login_required
+def clear_error():
+    robot_id = request.args.get("robot_id")
+    robot = models.Robots.query.filter_by(ROBOT_ID=robot_id).first()
+    robot.ERROR_STATE = 0
+    db.session.commit()
+    return redirect(url_for('general.robots'))
+
 @general.route("/robots/execute", methods=["GET"])
 @login_required
 def execute():

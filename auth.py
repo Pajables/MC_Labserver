@@ -59,17 +59,17 @@ def add_robot():
     elif request.method == "POST":
         robot_id = request.form.get('robot_id')
         robot_key = request.form.get('robot_key')
-        robot = Robots.query.filter_by(Robot_key=robot_key).first()
-
+        robot_name = request.form.get('robot_name')
+        robot = Robots.query.filter_by(ROBOT_ID=robot_id).first()
         if robot:
-            flash("That robot is already present in the database")
-            return render_template('auth/add_robot')
+            flash(f"Robot {robot_key} is already present in the database")
+            return render_template('auth/add_robot.html')
         else:
-            new_robot = Robots(ROBOT_ID=robot_id, ROBOT_KEY=generate_password_hash(robot_key, method='sha256'))
+            new_robot = Robots(ROBOT_ID=robot_id, ROBOT_NAME=robot_name, ROBOT_KEY=generate_password_hash(robot_key, method='sha256'))
             db.session.add(new_robot)
             db.session.commit()
             flash(f"Robot {robot_id} added successfully")
-            return render_template('auth/add_robot')
+            return render_template('auth/add_robot.html')
 
 
 @auth.route('/admin/add_user', methods=['GET', 'POST'])

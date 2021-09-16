@@ -31,9 +31,12 @@
             {% else %}
                 <td>Stop ({{item[5]}})</td>
             {% endif %}
-            <td>{{item[6]}}</td>
+                <td>{{item[6]}}</td>
             <td><a href="{{url_for('general.execute', robot_id=item[0], cmd='1')}}">Go</a></td>
             <td><a href="{{url_for('general.execute', robot_id=item[0], cmd='0')}}">Stop</a></td>
+            {% if item[3] == "ERROR" %}
+                <td><a href="{{url_for('general.clear_error', robot_id=item[0])}}">Clear error status</a></td>
+            {% endif %}
         </tr>
         {% endfor %}
     </table>

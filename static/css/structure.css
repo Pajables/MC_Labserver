@@ -69,12 +69,12 @@ form {
     color: #FFFFFF;
 }
 
-#reaction-options {
+#reaction-options, #queue-options, #admin-options {
     background-color: #45296e;
     margin-top: 20px;
 }
 
-#reaction-options a, #queue-options a {
+#reaction-options a, #queue-options a, #admin-options a {
     color: #FFFFFF;
     font-size: 20px;
     margin: 10px;
@@ -86,10 +86,14 @@ form {
     font-size: 20px;
 }
 
-#manual-input-table td, table{
+.form-table td, table{
     border: none;
 }
 
 button {
     margin-top: 5px;
+}
+
+form h2 {
+    color:black;
 }

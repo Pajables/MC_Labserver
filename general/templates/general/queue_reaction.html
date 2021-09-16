@@ -1,6 +1,5 @@
 {% extends "general/structure.html" %}
 {% block insert1 %}
-    =====================================<br>
     {% with message = get_flashed_messages() %}
         {% if message %}
             <div class="urgent-notification">
@@ -12,27 +11,37 @@
     {% for item in all_reactions %}
     <a href="{{url_for('general.queue_reaction', reaction_name=item )}}">{{item}}</a>
     {% endfor %}
-    <br>=====================================<br>
     {% if reaction_params != None and all_robots %}
         <h2>{{reaction_name}}</h2>
         <form id="queue-reaction" method="POST" action="/queue_reaction">
-            {% for i in range(0, reaction_params | length) %}
-                <div>
-                    <label for="param{{i}}">{{reaction_params[i]}}</label>
-                    <input id="param{{i}}" name="param{{i}}">
-                </div>
-            {% endfor %}
-            <input type="hidden" id="reaction_name" name="reaction_name" value="{{reaction_name}}">
-            <label for="robot">Select a robot</label>
-            <select name="robot" id="robot">
-                {% for robot in all_robots %}
-                    <option value="{{robot[0]}}${{robot[1]}}">{{robot[1]}}</option>
+            <table class="form-table">
+                {% for i in range(0, reaction_params | length) %}
+                    <tr>
+                        <td>
+                            <label for="param{{i}}">{{reaction_params[i]}}</label>
+                        </td>
+                        <td>
+                            <input id="param{{i}}" name="param{{i}}">
+                        </td>
+                    </tr>
                 {% endfor %}
-            </select>
+                <tr>
+                    <td>
+                        <label for="robot">Select a robot</label>
+                    </td>
+                    <td>
+                        <select name="robot" id="robot">
+                            {% for robot in all_robots %}
+                                <option value="{{robot[0]}}${{robot[1]}}">{{robot[1]}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <input type="hidden" id="reaction_name" name="reaction_name" value="{{reaction_name}}">
             <button type="submit">Submit</button>
         </form>
     {% endif %}
-    <br>=====================================<br>
     <div id="reaction-options">
         <a href="{{url_for('general.add_reaction')}}">Add a new reaction</a>
         <a href="{{url_for('general.manual_input')}}">Manually input reaction data</a>

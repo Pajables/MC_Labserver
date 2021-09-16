@@ -7,6 +7,7 @@ class SynthesisPlanner:
     time = ['seconds', 's', 'hr', 'min', 'hours', 'minutes']
     mass = ['g', 'mg']
     volume = ['l', 'ml', 'ul']
+    temp = ['K', '°C']
     
     def __init__(self):
         self.name = 'test'
@@ -25,7 +26,7 @@ class SynthesisPlanner:
         """
         protocol = cls.load_xdl(xdl_file)
         if protocol[0] is None:
-            return protocol[1]
+            return False, protocol[1]
         else:
             protocol = protocol[0]
             procedure = protocol.findall('Procedure')
@@ -39,17 +40,26 @@ class SynthesisPlanner:
                     del step.attrib['param']
             xdl_string = et.tostring(protocol, encoding='UTF-8')
             xdl_string = xdl_string.decode('UTF-8')
-            return xdl_string
+            return True, xdl_string
 
     @classmethod
     def load_xdl(cls, xdl_file):
-        try:
-            xdl_file = os.path.join(current_app.config['PROTOCOL_FOLDER'], xdl_file)
-            with open(xdl_file, encoding='UTF') as xdl:
-                raw_file = json.load(xdl)
-                protocol = et.fromstring(raw_file['protocol'])
-        except (FileNotFoundError, json.decoder.JSONDecodeError, KeyError) as e:
-            return (None, str(e))
+        xdl_file = os.path.join(current_app.config['PROTOCOL_FOLDER'], xdl_file)
+        if xdl_file[-4:] == ".xdl":
+            try:
+                with open(xdl_file, encoding='UTF-8') as xdl:
+                    raw_xdl = xdl.read()
+                    protocol = et.fromstring(raw_xdl)
+            except (FileNotFoundError, KeyError) as e:
+                return (None, str(e))
+        else:
+            # file must be json
+            try:
+                with open(xdl_file, encoding='UTF-8') as xdl:
+                    raw_file = json.load(xdl)
+                    protocol = et.fromstring(raw_file['protocol'])
+            except (FileNotFoundError, json.decoder.JSONDecodeError, KeyError) as e:
+                return (None, str(e))
         return (protocol,)
     
     @classmethod
@@ -61,6 +71,8 @@ class SynthesisPlanner:
             search_term = 'mass'
         elif units in cls.volume:
             search_term = 'volume'
+        elif units in cls.temp:
+            search_term = 'temp'
         else:
             search_term = ''
         return search_term, units
