@@ -54,10 +54,10 @@
 </head>
 <body>
     <div class="top-nav">
-        <a class="active-nav" href="{{url_for('general.index')}}">Home</a>
+        <a href="{{url_for('general.index')}}">Home</a>
         <a href="{{url_for('general.robots')}}">Robot status</a>
         <a href="{{url_for('general.reactions')}}">Reaction status</a>
-        <a href="{{url_for('general.display_reactions')}}">Reaction data</a>
+        <a class="active-nav" href="{{url_for('general.display_reactions')}}">Reaction-specific data</a>
         <a href="{{url_for('general.queue_reaction')}}">Reaction queue</a>
         <a href="{{url_for('auth.logout')}}">Log out</a>
     </div>
@@ -73,7 +73,7 @@
             </div>
         {% endif %}
     {% endwith %}
-    <h1>Add new reaction</h1>
+    <h1>Add new reaction class</h1>
     <div id="introduction">
         For the reaction, please specify the reaction name and the reaction parameters. Then, upload a XDL document specifying the reaction steps.
     </div>

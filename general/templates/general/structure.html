@@ -7,12 +7,12 @@
 </head>
 <body>
     <div class="top-nav">
-        <a id="active-nav" href="{{url_for('general.index')}}">Home</a>
-        <a href="{{url_for('general.robots')}}">Robot status</a>
-        <a href="{{url_for('general.reactions')}}">Reactions status</a>
-        <a href="{{url_for('general.show_queue')}}">Reaction queue</a>
-        <a href="{{url_for('general.display_reactions')}}">Reaction-specific data</a>
-        <a href="{{url_for('auth.logout')}}">Log out</a>
+        <a id="nav1" href="{{url_for('general.index')}}">Home</a>
+        <a id="nav2" href="{{url_for('general.robots')}}">Robot status</a>
+        <a id="nav3" href="{{url_for('general.reactions')}}">Reactions status</a>
+        <a id="nav4" href="{{url_for('general.show_queue')}}">Reaction queue</a>
+        <a id="nav5" href="{{url_for('general.display_reactions')}}">Reaction-specific data</a>
+        <a id="nav6" href="{{url_for('auth.logout')}}">Log out</a>
     </div>
     {% if current_user.ADMIN == 1 %}
     <div class="admin-nav">

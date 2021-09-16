@@ -36,6 +36,7 @@ def index():
     robot_id = json_args.get('robot_id')
     robot = Robots.query.filter_by(ROBOT_ID=robot_id).first()
     robot.IP_ADDRESS = json_args.get('ip')
+    db.session.commit()
     return {'conn_status': 'accepted'}
 
 @robots_api.route("/status", methods=['GET','POST'])

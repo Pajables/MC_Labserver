@@ -1,6 +1,10 @@
 {% extends 'general/structure.html' %}
 {% block insert1 %}
 {% with messages = get_flashed_messages() %}
+<script>
+    var nav = document.getElementById("nav2");
+    nav.className = "active-nav";
+</script>
 <div class="urget_notification">
 {% for message in messages %}
     {{message}}
