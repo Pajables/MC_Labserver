@@ -1,0 +1,36 @@
+{% extends 'general/structure.html' %}
+    {% block insert1 %}
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="urgent_notification">
+                    {{messages[0]}}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <h1>Manually input reaction data</h1>
+        <h2>Leave blank to leave item unchanged</h2>
+        <h2>Parameters for {{reaction_name}}:</h2>
+            <form method="POST" action="/manual_input">
+                <table class="form-table">
+                    {% for i in range(0, reaction_params | length) %}
+                    <tr>
+                        <td>
+                            <label for="param{{i}}">{{reaction_params[i]}}</label>
+                        </td>
+                        <td>
+                            <input id="param{{i}}" name="param{{i}}" placeholder="{{specific_reaction[i+3]}}">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if new_reaction %}
+                        <input type="hidden" id="new_reaction" name="new_reaction" value=1>
+                    {% endif %}
+                    {% if not new_reaction %}
+                        <input type="hidden" id="reaction_id" name="reaction_id" value="{{reaction_id}}">
+                    {% endif %}
+                    <input type="hidden" id="reaction_name" name="reaction_name" value="{{reaction_name}}">
+                    <input type="hidden" id="num_params" name="num_params" value="{{reaction_params | length}}">
+                </table>
+                <button type="submit">Submit</button>
+            </form>
+    {% endblock insert1 %}

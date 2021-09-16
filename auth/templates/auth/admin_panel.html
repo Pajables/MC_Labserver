@@ -1,0 +1,10 @@
+{% extends 'general/structure.html' %}
+{% block insert1 %}
+    <h1>Admin panel</h1>
+    <h2>Hello {{name}}, you are an admin!</h2>
+    <div id="admin-options">
+        <a href="{{url_for('auth.add_user')}}">Add users</a>
+        <a href="{{url_for('auth.add_robot')}}">Add robots</a>
+        <a href="{{url_for('auth.logout')}}">Log out</a>
+    </div>
+{% endblock insert1 %}

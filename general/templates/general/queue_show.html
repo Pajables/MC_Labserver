@@ -1,0 +1,30 @@
+{% extends 'general/structure.html' %}
+{% block insert1 %}
+    {% with messages = get_flashed_messages() %}
+        <div class="urget_notification">
+        {% for message in messages %}
+            {{message}}
+        {% endfor %}
+        </div>
+    {% endwith %}
+    <h1>Currently queued reactions:</h1>
+    <table>
+        {% for column in columns %}
+        <th class="table-headers">{{column}}</th>
+        {% endfor %}
+        {% for item in queue_items %}
+        <tr>
+            <td>{{item[0]}}</td>
+            <td>{{item[1]}}</td>
+            <td>{{item[2]}}</td>
+            <td>{{item[3]}}</td>
+            <td>{{item[4]}}</td>
+            <td>{{item[5]}}</td>
+            <td><a href="{{url_for('general.unqueue', reaction_id=item[3], reaction_name=item[2])}}">Remove</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div id="queue-options">
+        <a href="{{url_for('general.queue_reaction')}}">Queue a reaction</a>
+    </div>
+{% endblock insert1 %}

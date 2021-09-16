@@ -1,0 +1,99 @@
+body{
+    font-family: 'Calibri';
+}
+
+h1 {
+    font-size: 30px;
+}
+
+h2 {
+    font-size: 26px;
+}
+
+h1, h2 {
+    color: #e65525;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.top-nav {
+    background-color: #291840;
+}
+
+.top-nav a {
+    font-size: 20px;
+    color: #FFFFFF;
+    margin: 10px;
+}
+
+.admin-nav {
+    background-color: #45296e;
+}
+
+.admin-nav a{
+    font-size: 20px;
+    color: #FFFFFF;
+    margin: 10px;
+}
+
+#active-nav {
+    background-color: #42aff5;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    font-size: 16px;
+}
+
+th, td {
+    padding: 5px;
+}
+
+.table-headers {
+    background-color: #EEEEEE;
+}
+
+form {
+    background-color: #9ab5d9;
+    padding: 20px;
+    margin: 0px;
+}
+
+.input-field{
+    background-color: #EEEEEE;
+}
+
+.submit-button {
+    background-color: #290840;
+    color: #FFFFFF;
+}
+
+#reaction-options, #queue-options, #admin-options {
+    background-color: #45296e;
+    margin-top: 20px;
+}
+
+#reaction-options a, #queue-options a, #admin-options a {
+    color: #FFFFFF;
+    font-size: 20px;
+    margin: 10px;
+}
+
+.reaction-class {
+    background-color: #eeeeee;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.form-table td, table{
+    border: none;
+}
+
+button {
+    margin-top: 5px;
+}
+
+form h2 {
+    color:black;
+}

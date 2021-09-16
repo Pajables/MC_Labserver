@@ -1,0 +1,40 @@
+{% extends 'general/structure.html' %}
+{% block insert1 %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="urgent_notification">
+                {{messages[0]}}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <h3 class='title'>Add a robot to the server</h3>
+    <form method="POST" action="/admin/add_robot">
+        <table id="form-table">
+            <tr>
+                <td>
+                    <label for="robot_id">Robot ID (string)</label>
+                </td>
+                <td>
+                    <input class="input-field" id="robot_id" name="robot_id" placeholder="Robot ID">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="robot-name">Robot name</label>
+                </td>
+                <td>
+                    <input class="input-field" id="robot_name" name="robot_name" placeholder="Robot Name">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="robot_key">Robot pre-shared key</label>
+                </td>
+                <td>
+                    <input class="input-field" id="robot_key" name="robot_key" placeholder="Robot Key">
+                </td>
+            </tr>
+        </table>
+        <button class="submit-button" type="submit">Add robot</button>
+    </form>
+{% endblock insert1 %}

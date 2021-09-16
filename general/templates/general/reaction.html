@@ -1,0 +1,50 @@
+{% extends 'general/structure.html' %}
+{% block insert1 %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="urgent_notification">
+                {{messages[0]}}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <h1>Display reaction data</h1>
+    <h2>Available reactions:</h2>
+    {% for item in all_reactions %}
+        <div class='reaction-class'>
+            <a href="{{url_for('general.display_reactions', reaction_name=item )}}">{{item}}</a>
+        </div>
+    {% endfor %}
+    {% if sel_reaction %}
+        <h2>Data for {{reaction_name}}:</h2>
+        <table>
+            <tr>
+                <th>Last Update</th>
+                <th>Reaction ID</th>
+                <th>User ID</th>
+                {% for param in reaction_params %}
+                <th>{{param}}</th>
+                {% endfor %}
+                {% for result in results %}
+                <th>{{result}}</th>
+                {% endfor %}
+            </tr>
+            {% for record in reaction_table %}
+            <tr>
+                {% for item in record %}
+                    <td>{{item}}</td>
+                {% endfor %}
+                <td>
+                    <a href="{{url_for('general.manual_input', reaction_id=record['REACTION_ID'], reaction_name=reaction_name, user_id=record['USER_ID'])}}">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    <div id="reaction-options">
+        {% if sel_reaction %}
+        <a href="{{url_for('general.manual_input', reaction_id=-1, reaction_name=reaction_name, user_id=current_user.USER_ID)}}">Manually add a {{reaction_name}} reaction</a>
+        {% endif %}
+        <a href="{{url_for('general.add_reaction')}}">Add a new reaction class</a>
+        <a href="{{url_for('general.queue_reaction')}}">Queue a reaction</a>
+    </div>
+{% endblock insert1 %}

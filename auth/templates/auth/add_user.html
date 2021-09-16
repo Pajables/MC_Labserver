@@ -1,0 +1,26 @@
+{% extends 'general/structure.html' %}
+{% block insert1 %}
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="urgent_notification">
+            {{messages[0]}}
+        </div>
+    {% endif %}
+    {% endwith %}
+    <h3 class='title'>Add a user to the server</h3>
+    <form method="POST" action="/admin/add_user">
+        <div class="field">
+            <label for="username">New user username</label>
+            <input type="text" class="input-field" id="username" name="username" placeholder="Username">
+        </div>
+        <div class="field">
+            <label for="password">New user password</label>
+            <input type="password" class="input-field" id="password" name="password" placeholder="Password">
+        </div>
+        <div class="checkbox">
+            <label for="admin_check">This user is an admin</label>
+            <input type="checkbox" id="admin_check" name="admin_check" value=1>
+        </div>
+        <button class="submit-button" type="submit">Add user</button>
+    </form>
+{% endblock insert1 %}

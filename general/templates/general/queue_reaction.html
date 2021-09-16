@@ -1,0 +1,50 @@
+{% extends "general/structure.html" %}
+{% block insert1 %}
+    {% with message = get_flashed_messages() %}
+        {% if message %}
+            <div class="urgent-notification">
+                {{message[0]}}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <h2>Choose a reaction to queue:</h2>
+    {% for item in all_reactions %}
+    <a href="{{url_for('general.queue_reaction', reaction_name=item )}}">{{item}}</a>
+    {% endfor %}
+    {% if reaction_params != None and all_robots %}
+        <h2>{{reaction_name}}</h2>
+        <form id="queue-reaction" method="POST" action="/queue_reaction">
+            <table class="form-table">
+                {% for i in range(0, reaction_params | length) %}
+                    <tr>
+                        <td>
+                            <label for="param{{i}}">{{reaction_params[i]}}</label>
+                        </td>
+                        <td>
+                            <input id="param{{i}}" name="param{{i}}">
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td>
+                        <label for="robot">Select a robot</label>
+                    </td>
+                    <td>
+                        <select name="robot" id="robot">
+                            {% for robot in all_robots %}
+                                <option value="{{robot[0]}}${{robot[1]}}">{{robot[1]}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <input type="hidden" id="reaction_name" name="reaction_name" value="{{reaction_name}}">
+            <button type="submit">Submit</button>
+        </form>
+    {% endif %}
+    <div id="reaction-options">
+        <a href="{{url_for('general.add_reaction')}}">Add a new reaction</a>
+        <a href="{{url_for('general.manual_input')}}">Manually input reaction data</a>
+        <a href="{{url_for('general.queue_reaction')}}">Queue a reaction</a>
+    </div>
+{% endblock insert1 %}

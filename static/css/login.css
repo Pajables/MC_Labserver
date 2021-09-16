@@ -1,0 +1,25 @@
+body{
+    font-family: 'Calibri';
+}
+
+h1 {
+    background-color: #291840;
+    font-size: 30px;
+    color: #FFFFFF;
+    margin: 0px;
+}
+
+form {
+    background-color: #9ab5d9;
+    padding: 20px;
+    margin: 0px;
+}
+
+.input-field{
+    background-color: #EEEEEE;
+}
+
+.submit-button {
+    background-color: #291840;
+    color: #FFFFFF;
+}

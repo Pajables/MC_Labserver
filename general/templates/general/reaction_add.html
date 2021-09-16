@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add new reaction</title>
+    <link rel="stylesheet" href="/static/css/structure.css">
+    <script id="main">
+            var num_fields = 11
+            function add_field(){
+                var table = document.getElementById("reaction-parameters");
+                var row = table.insertRow(table.rowCount);
+                for (var i=1; i<5; i++){
+                    var field_name = "inner" + i.toString();
+                    var field = create_field(field_name);
+                    var cell = row.insertCell(i-1);
+                    cell.innerHTML = field;
+                }
+                num_fields += 1;
+            }
+
+            function create_field(name){
+                innerHTML = document.getElementById(name).innerHTML;
+                innerHTML = innerHTML.replace(/{num}/g, num_fields);
+                return innerHTML;
+            }
+    </script>
+    <div style="display: none" id="inner1">
+        <label for="param{num}name">Parameter{num}</label>
+    </div>
+    <div style="display: none" id="inner2">
+        <input class="input-field" id="param{num}name" name="param{num}name" placeholder="Param {num} name">
+    </div>
+    <div style="display: none" id="inner3">
+        <label for="param{num}units">Select units</label>
+    </div>
+    <div style="display: none" id="inner4">
+        <select name="param{num}units" id="param{num}units">
+            <optgroup label="Time">
+                <option value="seconds">Seconds</option>
+                <option value="minutes">Minutes</option>
+                <option value="hours">Hours</option>
+            </optgroup>
+            <optgroup label="Volume">
+                <option value="ml">ml</option>
+                <option value="ul">&#956;l</option>
+            </optgroup>
+            <optgroup label="Mass">
+                <option value="g">g</option>
+                <option value="mg">mg</option>
+                <option value="ug">&#956;g</option>
+            </optgroup>
+        </select>
+    </div>
+</head>
+<body>
+    <div class="top-nav">
+        <a class="active-nav" href="{{url_for('general.index')}}">Home</a>
+        <a href="{{url_for('general.robots')}}">Robot status</a>
+        <a href="{{url_for('general.reactions')}}">Reaction status</a>
+        <a href="{{url_for('general.display_reactions')}}">Reaction data</a>
+        <a href="{{url_for('general.queue_reaction')}}">Reaction queue</a>
+        <a href="{{url_for('auth.logout')}}">Log out</a>
+    </div>
+    {% if current_user.ADMIN == 1 %}
+    <div class="admin-nav">
+        <a href="{{url_for('auth.admin_panel')}}">Administrator panel</a>
+    </div>
+    {% endif %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="urgent_notification">
+                {{messages[0]}}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <h1>Add new reaction</h1>
+    <div id="introduction">
+        For the reaction, please specify the reaction name and the reaction parameters. Then, upload a XDL document specifying the reaction steps.
+    </div>
+    <form method="POST" enctype="multipart/form-data" action="/add_reaction">
+        <table class="form-table">
+            <tr>
+                <td><label for="reaction-name">Reaction name</label></td>
+                <td><input class="input-field" id="reaction-name" name="reaction-name" placeholder="Reaction name"></td>
+            </tr>
+        </table>
+        <h2>Parameters for reaction</h2>
+        <table id="reaction-parameters" class="form-table">
+            {% for i in range(1, 11) %}
+                <tr>
+                    <td><label for="param{{i}}name">Parameter{{i}}</label></td>
+                    <td><input class="input-field" id="param{{i}}name" name="param{{i}}name" placeholder="Param {{i}} name"></td>
+                    <td><label for="param{{i}}units">Select units</label></td>
+                    <td>
+                        <select name=param{{i}}units id=param{{i}}units>
+                            <optgroup label="Time">
+                                <option value="seconds">Seconds</option>
+                                <option value="minutes">Minutes</option>
+                                <option value="hours">Hours</option>
+                            </optgroup>
+                            <optgroup label="Volume">
+                                <option value="ml">ml</option>
+                                <option value="ul">&#956;l</option>
+                            </optgroup>
+                            <optgroup label="Mass">
+                                <option value="g">g</option>
+                                <option value="mg">mg</option>
+                                <option value="ug">&#956;g</option>
+                            </optgroup>
+                            <optgroup label="Temperature">
+                                <option value="°C">&#176;C</option>
+                                <option value="K">K</option>
+                            </optgroup>
+                        </select>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <h2>Results types for reaction:</h2>
+        <table id="results" class="form-table">
+            <tr>
+                <td><label for="results1">Results 1</label></td>
+                <td><input class="input-field" id="results0" name="results0" placeholder="Results 1 type"></td>
+                <td><input class="input-field" id="results0units" name="results0units" placeholder="Results 1 units"></td>
+            </tr>
+            <tr>
+                <td><label for ="results2">Results 2</label></td>
+                <td><input class="input-field" id="results1" name="results1" placeholder="Results 2 type"></td>
+                <td><input class="input-field" id="results1units" name="results1units" placeholder="Results 2 units"></td>
+            </tr>
+            <tr>
+                <td><label for="results3">Results 3</label></td>
+                <td><input class="input-field" id="results2" name="results2" placeholder="Results 3 type"></td>
+                <td><input class="input-field" id="results2units" name="results2units" placeholder="Results 3 type"></td>
+            </tr>
+            <tr>
+                <td><label for="protocol">Please upload a protocol file (json or XDL)</label></td>
+                <td><input type="file" id="protocol" name="protocol"></td>
+            </tr>
+        </table>
+        <button id="add-field" type="button" onclick="add_field()">Add field</button>
+        <button id="submit-button" type="submit">Submit</button>
+    </form>
+</body>
+</html>
