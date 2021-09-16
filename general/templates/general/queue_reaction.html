@@ -1,5 +1,9 @@
 {% extends "general/structure.html" %}
 {% block insert1 %}
+    <script>
+        var nav = document.getElementById("nav4");
+        nav.className = "active-nav";
+    </script>
     {% with message = get_flashed_messages() %}
         {% if message %}
             <div class="urgent-notification">

@@ -1,5 +1,9 @@
 {% extends 'general/structure.html' %}
 {% block insert1 %}
+<script>
+    var nav = document.getElementById("nav3");
+    nav.className = "active-nav";
+</script>
     {% if num_pages == 0 %}
         <h1>No reaction data to display</h1>
     {% endif %}
@@ -34,7 +38,7 @@
         <h3>Current page: {{cur_page + 1}}</h3>
     {% endif %}
     <div id="reaction-options">
-        <a href="{{url_for('general.add_reaction')}}">Add a new reaction</a>
+        <a href="{{url_for('general.add_reaction')}}">Add a new reaction class</a>
         <a href="{{url_for('general.queue_reaction')}}">Queue a reaction</a>
     </div>
 {% endblock insert1 %}
