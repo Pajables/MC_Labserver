@@ -31,13 +31,18 @@ class SynthesisPlanner:
             protocol = protocol[0]
             procedure = protocol.findall('Procedure')
             for step in procedure[0]:
-                param = step.get('param')
-                if param:
-                    num = int(param.split('_')[1])
-                    parameter = parameters[num]
+                step_param_no = 0
+                param = step.get(f'step_param{step_param_no}')
+                # iterate through all the step's parameters
+                while param:
+                    param_num = int(param.split('_')[1])
+                    parameter = parameters[param_num]
                     search_term, units = cls.get_units(parameter[0])
+                    # update this parameter with relevant value from table.
                     step.attrib[search_term] = str(parameter[1]) + ' ' + units
-                    del step.attrib['param']
+                    del step.attrib[f'param{step_param_no}']
+                    step_param_no += 1
+                    param = step.get(f'step_param{step_param_no}')
             xdl_string = et.tostring(protocol, encoding='UTF-8')
             xdl_string = xdl_string.decode('UTF-8')
             return True, xdl_string

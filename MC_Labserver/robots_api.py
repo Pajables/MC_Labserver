@@ -82,6 +82,6 @@ def reactions():
             parameters.append([reaction_params[i], reaction_data[i+3]])
         xdl = synthesis_planner.SynthesisPlanner.update_xdl(parameters, xdl_file)
         if xdl[0]:
-            return {"protocol": xdl[1],  'xdl_file': xdl_file, 'REACTION_ID': reaction_data[1], "parameters": [(item[0], item[1]) for item in parameters] }
+            return {"name": reaction_name,"protocol": xdl[1],  'xdl_file': xdl_file, 'REACTION_ID': reaction_data[1], "parameters": [(item[0], item[1]) for item in parameters] }
         else:
             return xdl[1]
