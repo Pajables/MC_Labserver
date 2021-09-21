@@ -1,5 +1,5 @@
 from . import synthesis_planner
-from flask import Blueprint, request, send_from_directory
+from flask import Blueprint, request, send_from_directory, jsonify
 from functools import wraps
 from werkzeug.security import check_password_hash
 from . import db
@@ -16,14 +16,14 @@ def  requires_robot_login(func):
     def verify_robot(*args, **kwargs):
         json_args = request.get_json()
         if json_args is None:
-            return {'conn_status': 'refused - invalid JSON'}
+            return jsonify({'conn_status': 'refused - invalid JSON'})
         robot_id = json_args.get('robot_id')
         robot_key = json_args.get('robot_key')
         robot = Robots.query.filter_by(ROBOT_ID=robot_id).first()
         if robot and check_password_hash(robot.ROBOT_KEY, robot_key):
             return func(*args, **kwargs)
         else:
-            return {'conn_status': 'refused - invalid id/key'}
+            return jsonify({'conn_status': 'refused - invalid id/key'})
     return verify_robot
 
 
@@ -37,7 +37,7 @@ def index():
     robot = Robots.query.filter_by(ROBOT_ID=robot_id).first()
     robot.IP_ADDRESS = json_args.get('ip')
     db.session.commit()
-    return {'conn_status': 'accepted'}
+    return jsonify({'conn_status': 'accepted'})
 
 @robots_api.route("/status", methods=['GET','POST'])
 @requires_robot_login
@@ -53,13 +53,13 @@ def status():
             if robot_status == "ERROR":
                 robot.ERROR_STATE = 1
             db.session.commit()
-            return {'robot_status': 'updated'}
+            return jsonify({'robot_status': 'updated'})
     elif request.method == "GET":
         if cmd == "robot_execute":
-            return {"action": robot.EXECUTE}
+            return jsonify({"action": robot.EXECUTE})
         elif cmd == "error_state":
-            return {"error_state": robot.ERROR_STATE}
-    return {"conn_status": "refused"}
+            return jsonify({"error_state": robot.ERROR_STATE})
+    return jsonify({"conn_status": "refused"})
 
 @robots_api.route('/reaction', methods=['GET'])
 @requires_robot_login
@@ -82,6 +82,6 @@ def reactions():
             parameters.append([reaction_params[i], reaction_data[i+3]])
         xdl = synthesis_planner.SynthesisPlanner.update_xdl(parameters, xdl_file)
         if xdl[0]:
-            return {"name": reaction_name,"protocol": xdl[1],  'xdl_file': xdl_file, 'REACTION_ID': reaction_data[1], "parameters": [(item[0], item[1]) for item in parameters] }
+            return jsonify({"name": reaction_name,"protocol": xdl[1],  'xdl_file': xdl_file, 'REACTION_ID': reaction_data[1], "parameters": [(item[0], item[1]) for item in parameters] })
         else:
-            return xdl[1]
+            return jsonify({"error": xdl[1]})

@@ -201,8 +201,7 @@ def manual_input():
                 return redirect(url_for('general.display_reactions'))
         else:
             # This is a new reaction 
-            reaction_id = reaction_id = db.session.execute(
-                    f"SELECT REACTION_ID FROM {table_name} WHERE REACTION_ID=(SELECT MAX(REACTION_ID) FROM {table_name})").fetchone()
+            reaction_id = db.session.execute("SELECT REACTION_ID FROM Reactions_Status WHERE REACTION_ID=(SELECT MAX(REACTION_ID) FROM Reactions_Status)").fetchone()
             if reaction_id is None:
                 reaction_id = 1
             else:
@@ -270,8 +269,7 @@ def queue_reaction():
         parameters = form_output["parameters"]
         if parameters and robot:
             try:
-                reaction_id = db.session.execute(
-                    f"SELECT REACTION_ID FROM {table_name} WHERE REACTION_ID=(SELECT MAX(REACTION_ID) FROM {table_name})").fetchone()
+                reaction_id = db.session.execute("SELECT REACTION_ID FROM Reactions_Status WHERE REACTION_ID=(SELECT MAX(REACTION_ID) FROM Reactions_Status)").fetchone()
                 if reaction_id is None:
                     reaction_id = 1
                 else:

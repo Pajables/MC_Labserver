@@ -2,16 +2,16 @@
 
 <Synthesis>
     <Hardware>
-        <Component id="Reactor1" type="reactor" />
+        <Component id="reactor" type="reactor" />
     </Hardware>
     
     <Reagents>
-        <Reagent name="Water" />
+        <Reagent id="Water" />
      </Reagents>
      
      <Procedure>
-        <Add reagent="Water" vessel="Reactor1" volume="" stir="False" param="param_2" />
-        <HeatChill vessel="Reactor1" temp="" param="param_0" />
-	    <Stir vessel="Reactor1" time="" stir_speed="1000 rpm" param="param_1" />
+        <Add reagent="Water" vessel="reactor" volume="" stir="False" param="param2" />
+        <HeatChill vessel="reactor" temp="" param="param0" />
+	<Stir vessel="reactor" time="" stir_speed="1000 rpm" param="param1" />
     </Procedure>
 </Synthesis>
