@@ -29,7 +29,10 @@ class SynthesisPlanner:
             return False, protocol[1]
         else:
             protocol = protocol[0]
-            procedure = protocol.findall('Procedure')
+            if protocol.find("Synthesis"):
+                procedure = protocol[0].findall("Procedure")
+            else:
+                procedure = protocol.findall('Procedure')
             for step in procedure[0]:
                 step_param_no = 0
                 param = step.get(f'step_param{step_param_no}')
