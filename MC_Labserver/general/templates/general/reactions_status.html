@@ -32,8 +32,14 @@
         <div id="page-count">
             Pages:
             {% for i in range(0, num_pages) %}
-            <a href="{{url_for('general.reactions', page_nr=i)}}">{{i+1}}</a>
+                <a href="{{url_for('general.reactions', page_nr=i, results_per_page=results_per_page)}}">{{i+1}}</a>
             {% endfor %}
+        </div>
+        <div>
+            Results per page:
+            <a href="{{url_for('general.reactions', results_per_page=40)}}">40</a>
+            <a href="{{url_for('general.reactions', results_per_page=100)}}">100</a>
+            <a href="{{url_for('general.reactions', results_per_page=150)}}">150</a>
         </div>
         <h3>Current page: {{cur_page + 1}}</h3>
     {% endif %}

@@ -74,6 +74,8 @@
         {% endif %}
     {% endwith %}
     <h1>Add new reaction class</h1>
+    <h2>You can either add a reaction manually, or upload a CSV file containing the parameters using the batch link below.</h2>
+    <a href="{{url_for('general.batch_add_reaction')}}">Add a new reaction batch</a>
     <div id="introduction">
         For the reaction, please specify the reaction name and the reaction parameters. Then, upload a XDL document specifying the reaction steps.
     </div>
@@ -111,6 +113,9 @@
                                 <option value="°C">&#176;C</option>
                                 <option value="K">K</option>
                             </optgroup>
+                            <optgroup label="Colour">
+                                <option value="hex">Hexadecimal RGB</option>
+                            </optgroup>
                         </select>
                     </td>
                 </tr>
@@ -136,6 +141,10 @@
             <tr>
                 <td><label for="protocol">Please upload a protocol file (json or XDL)</label></td>
                 <td><input type="file" id="protocol" name="protocol"></td>
+            </tr>
+            <tr>
+                <td><label for="clean-step">Does this reaction require manual cleaning?</label></td>
+                <td><input type="checkbox" id="clean-step" name=clean-step value="clean"></checkbox></td>
             </tr>
         </table>
         <button id="add-field" type="button" onclick="add_field()">Add field</button>

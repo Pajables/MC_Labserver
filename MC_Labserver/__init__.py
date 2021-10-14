@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from . import synthesis_planner
 
 db = SQLAlchemy()
-synth_planner = synthesis_planner.SynthesisPlanner()
+synth_planner = synthesis_planner.SynthesisPlanner(['azo_synthesis'])
 
 def create_app():
     app = Flask(__name__)
@@ -13,6 +13,8 @@ def create_app():
     app_root = os.path.dirname(os.path.abspath(__file__))
     app.config['UPLOAD_FOLDER'] = os.path.join(app_root, 'static/uploads')
     app.config['PROTOCOL_FOLDER'] = os.path.join(app.config['UPLOAD_FOLDER'], 'reaction_protocols')
+    app.config['REACTION_IMAGE_FOLDER'] = os.path.join(app.config['UPLOAD_FOLDER'], 'reaction_images')
+    app.config['SENT_FILES_FOLDER'] = os.path.join(app_root, 'static/sent_files')
     db.init_app(app)
 
     with app.app_context():

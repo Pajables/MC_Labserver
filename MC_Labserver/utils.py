@@ -2,27 +2,34 @@ from flask import current_app, redirect, flash
 from werkzeug.utils import secure_filename
 import os
 import sys
+import random
+import string
+import csv
 
 unit_db_map = {"seconds": "INT", "minutes": "DOUBLE", "hours": "DOUBLE",
                "ml": "DOUBLE", "ul": "DOUBLE", "g": "DOUBLE", "mg": "DOUBLE",
-                "ug": "DOUBLE", "°C": "DOUBLE", "K": "DOUBLE"}
+                "ug": "DOUBLE", "°C": "DOUBLE", "K": "DOUBLE", "hex": "INT"}
 
+
+def generate_img_id():
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=24))
 
 def allowed_file(filename):
     return '.' in filename and filename.split('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
 
 
-def upload_protocol(request):
-    if 'protocol' not in request.files:
-        flash('No file added')
-        return redirect(request.url)
-    file = request.files['protocol']
+def upload_protocol(request, protocol_type):
+    e = ''
+    if protocol_type not in request.files:
+        e =f"{protocol_type} file not found"
+        return None, e
+    file = request.files[protocol_type]
     filename = sanitise_file(file)
     if filename is None:
-        return redirect(request.url)
+        e = "That file extension is not recognised"
+        return None, e
     file.save(os.path.join(current_app.config['PROTOCOL_FOLDER'], filename))
-    return filename
-
+    return filename, e
 
 def sanitise_file(file):
     filename = None
@@ -49,7 +56,7 @@ def split_results(data, results_per_page):
         i += 1
     if len(rows) > 0:
         split_data.append(rows)
-        i = 1
+        i += 1
     return split_data, i
 
 
@@ -111,6 +118,11 @@ def process_reaction_form(form):
     parameters = []
     results = []
     reaction_name = form.get("reaction-name")
+    clean_step = form.get("clean-step")
+    if clean_step is None:
+        clean_step = 0
+    else:
+        clean_step = 1
     param_no = 1
     while True:
         name = f"param{param_no}name"
@@ -140,7 +152,7 @@ def process_reaction_form(form):
         else:
             table_units = unit_db_map[results_units]
             results.append([results_name + '$result$' + results_units, table_units])
-    return {"reaction_name": reaction_name, "reaction_params": parameters, "results": results}
+    return {"reaction_name": reaction_name, "clean_step": clean_step,  "reaction_params": parameters, "results": results}
 
 
 def get_avail_reactions(db):
@@ -185,6 +197,7 @@ def add_column_formatting(columns):
     """
     for i in range(len(columns)):
         columns[i][0] = columns[i][0].replace(" ", "_")
+        columns[i][0] = columns[i][0].replace("-", "_")
 
 
 def remove_column_formatting(columns, split_term):
@@ -199,3 +212,33 @@ def remove_column_formatting(columns, split_term):
             name = words[0]
             columns[i] = name + " [" + unit + "]"
         columns[i] = columns[i].replace("_", " ")
+
+def extract_from_csv(csv_filename, delimiter=';'):
+    data = []
+    with open(os.path.join(current_app.config['PROTOCOL_FOLDER'], csv_filename)) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=delimiter)
+        for row in csv_reader:
+            data.append(row)
+    columns = []
+    for i in range(len(data[0])):
+        col_name = data[0][i].split('[')
+        units = col_name[-1][:-1]
+        # if there are no units this must be a results column
+        if data[1][i] == '':          
+            columns.append([col_name[0] + "$result$" + units, unit_db_map.get(units)])
+        else:
+            columns.append([col_name[0] + "$$" + units, unit_db_map.get(units)])
+    add_column_formatting(columns)
+    return [columns, data[1:]]
+            
+def write_csv(reaction_name, reaction_params, results, reaction_data):
+    file = f"{reaction_name}.csv"
+    path = current_app.config['SENT_FILES_FOLDER']
+    filepath = os.path.join(path, file)
+    with open(filepath, 'w+') as csv_file:
+        writer = csv.writer(csv_file, delimiter=';')
+        writer.writerow(reaction_params+results)
+        for row in reaction_data:
+            writer.writerow(row[3:])
+    return file, path
+    
