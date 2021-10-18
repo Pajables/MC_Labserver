@@ -5,7 +5,7 @@ from functools import wraps
 from werkzeug.security import check_password_hash
 from sqlalchemy import exc
 from . import db
-from .models import Robots, RobotQueue, Reactions
+from .models import Robots, RobotQueue, Reactions, ReactionStatus
 from . import utils
 from . import synth_planner
 import sys
@@ -65,6 +65,15 @@ def status():
             return jsonify({"error_state": robot.ERROR_STATE})
     return jsonify({"conn_status": "refused"})
 
+@robots_api.route("/complete_reaction", methods=['POST'])
+@requires_robot_login
+def complete_reaction():
+    if request.method == "POST":
+        json_args = request.get_json()
+        reaction_id = json_args.get('reaction_id')
+        ReactionStatus.query.filter_by(REACTION_ID=reaction_id).delete()
+        db.session.commit()
+
 @robots_api.route('/reaction', methods=['GET'])
 @requires_robot_login
 def reactions():
@@ -86,13 +95,13 @@ def reactions():
         parameters = []
         for i in range(len(reaction_params)):
             # offset reaction data to account for last_update, reaction_id, user_id columns
-            parameters.append([reaction_params[i], reaction_data[i+3]])
+            parameters.append([reaction_params[i], reaction_data[i+4]])
         xdl = synthesis_planner.SynthesisPlanner.update_xdl(parameters, xdl_file)
         clean_step = reaction_data[i + 4]
         if xdl[0]:
             RobotQueue.query.filter_by(REACTION_ID=next_item.REACTION_ID).delete()
             db.session.commit()
-            return jsonify({"name": reaction_name,"protocol": xdl[1],  'xdl_file': xdl_file, 'REACTION_ID': reaction_data[1], "parameters": [(item[0], item[1]) for item in parameters], "clean_step": clean_step})
+            return jsonify({"name": reaction_name, "reaction_id": next_item.REACTION_ID, "protocol": xdl[1],  'xdl_file': xdl_file, 'REACTION_ID': reaction_data[1], "parameters": [(item[0], item[1]) for item in parameters], "clean_step": clean_step})
         else:
             return jsonify({"error": xdl[1]})
 

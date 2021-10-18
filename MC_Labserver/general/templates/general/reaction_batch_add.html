@@ -52,7 +52,7 @@
                 {% for i in range(num_bots) %}
                 <tr>
                     <td>
-                        <input type="checkbox" id="robot{{i}}" name="robot{{i}}" value="{{avail_robots[i][0]}}">
+                        <input type="checkbox" id="robot{{i}}" name="robot{{i}}" value="{{avail_robots[i][0] + '$' + avail_robots[i][1]}}">
                         <label for="robot{{i}}">{{avail_robots[i][1]}}</label>
                     </td>
                 </tr>

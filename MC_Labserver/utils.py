@@ -5,6 +5,7 @@ import sys
 import random
 import string
 import csv
+from .synthesis_planner import SynthesisPlanner
 
 unit_db_map = {"seconds": "INT", "minutes": "DOUBLE", "hours": "DOUBLE",
                "ml": "DOUBLE", "ul": "DOUBLE", "g": "DOUBLE", "mg": "DOUBLE",
@@ -24,11 +25,16 @@ def upload_protocol(request, protocol_type):
         e =f"{protocol_type} file not found"
         return None, e
     file = request.files[protocol_type]
+    xdl = file.read()
+    protocol, error = SynthesisPlanner.load_xdl_string(xdl)
+    if protocol is None:
+        return None, error
     filename = sanitise_file(file)
     if filename is None:
         e = "That file extension is not recognised"
         return None, e
-    file.save(os.path.join(current_app.config['PROTOCOL_FOLDER'], filename))
+    with open(os.path.join(current_app.config['PROTOCOL_FOLDER'], filename), 'w+', encoding="UTF-8") as file:
+        file.write(xdl.decode('UTF-8'))
     return filename, e
 
 def sanitise_file(file):
@@ -142,16 +148,18 @@ def process_reaction_form(form):
         parameters.append(parameter)
         param_no += 1
         add_column_formatting(parameters)
-    for i in range(3):
-        results_name = form.get(f"results{i}")
-        results_units = form.get(f"results{i}units")
+    results_num = 1
+    while True:
+        results_name = form.get(f"results{results_num}")
+        results_units = form.get(f"results{results_num}units")
         if results_name is None or results_name == "":
-            continue
+            break
         elif results_units is None:
             results.append([results_name + "$result$", "FLOAT"])
         else:
             table_units = unit_db_map[results_units]
             results.append([results_name + '$result$' + results_units, table_units])
+            results_num += 1
     return {"reaction_name": reaction_name, "clean_step": clean_step,  "reaction_params": parameters, "results": results}
 
 

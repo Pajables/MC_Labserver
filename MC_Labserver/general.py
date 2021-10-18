@@ -94,9 +94,13 @@ def display_reactions():
             results=reaction_info["results"]
             specific_reaction = db.session.execute(f"SELECT * FROM {table_name};")
             pages_data, pages, page_nr = split_results(request, specific_reaction)
+            if len(pages_data) == 0:
+                page_data = []
+            else:
+                page_data = pages_data[page_nr]
             return render_template('general/reaction.html', all_reactions=all_reactions, sel_reaction=True,
                                    reaction_name=reaction_name, reaction_params=reaction_params, results=results,
-                                    reaction_data=pages_data[page_nr], cur_page=page_nr, num_pages=pages,
+                                    reaction_data=page_data, cur_page=page_nr, num_pages=pages,
                                     results_per_page=request.args.get('results_per_page'))
         except exc.ProgrammingError as e:
             flash("Query failed: " + str(e))
@@ -133,12 +137,12 @@ def add_reaction():
         results = form_output["results"]
         filename, e = utils.upload_protocol(request, 'protocol')
         if filename is None:
-            flash("Failed to add file" + e)
+            flash("Failed to add file: " + str(e))
             return render_template("general/reaction_add.html")
         table_name = reaction_name.replace(" ", "_")
         table_name = table_name.upper()
-        sql = f"CREATE TABLE IF NOT EXISTS {table_name} (LAST_UPDATE_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, REACTION_ID INT, USER_ID INT, CLEAN_STEP INT"
-        # REACTION_ID | USER_ID | PARAM1 | PARAM2 | PARAM3 | ....| RESULTS1| RESULTS2| RESULTS3|
+        sql = f"CREATE TABLE IF NOT EXISTS {table_name} (LAST_UPDATE_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, REACTION_ID INT, USER_ID INT, CLEAN_STEP INT,"
+        # REACTION_ID | USER_ID | CLEAN_STEP | PARAM1 | PARAM2 | PARAM3 | ....| RESULTS1| RESULTS2| RESULTS3|
         for parameter in parameters:
             sql += parameter[0] + " " + parameter[1] + ", "
         for result in results:
@@ -152,7 +156,7 @@ def add_reaction():
             db.session.commit()
             flash(f"Successfully added table {table_name}")
             return redirect(url_for('general.add_reaction'))
-        except exc.ProgrammingError as e:
+        except (exc.ProgrammingError, exc.IntegrityError) as e:
             flash(f"Failed to add table {table_name}" + str(e))
             return redirect(url_for('general.add_reaction'))
 
@@ -163,6 +167,7 @@ def batch_add_reaction():
         avail_robots = utils.get_avail_robots(db)
         return render_template("general/reaction_batch_add.html", avail_robots=avail_robots, num_bots=len(avail_robots))
     elif request.method == "POST":
+        avail_robots = utils.get_avail_robots(db)
         reaction_name = request.form.get('reaction_name')
         csv_delim = request.form.get('csv_delim')
         clean_step = request.form.get("clean-step")
@@ -212,12 +217,14 @@ def batch_add_reaction():
             for i in range(len(utils.get_avail_robots(db))):
                 robot = request.form.get(f"robot{i}")
                 if robot is not None:
-                    robots_participating.append(robot)
+                    robot = robot.split("$")
+                    robots_participating.append([robot[0], robot[1]])
             total_reactions = len(reaction_data)
             next_robot = get_next_robot(robots_participating, total_reactions)
             for row in reaction_data:
                 final_insert_sql = insert_sql + f"VALUES ({reaction_id}, {current_user.USER_ID}, {clean_step}, "
                 reaction_id += 1
+                robot = next(next_robot)
                 for i in range(len(row)):
                     if i in insert_cols:
                         row[i] = row[i].replace(',', '.')
@@ -225,13 +232,18 @@ def batch_add_reaction():
                 final_insert_sql = final_insert_sql[:-2]
                 final_insert_sql += ");"
                 db.session.execute(final_insert_sql)
-                queued_item = models.RobotQueue(USER_ID=current_user.USER_ID, ROBOT_ID=next(next_robot),
+                queued_item = models.RobotQueue(USER_ID=current_user.USER_ID, ROBOT_ID=robot[0],
                                                                         REACTION_NAME=reaction_name, REACTION_ID=reaction_id)
                 db.session.add(queued_item)
+                reaction_status = models.ReactionStatus(REACTION_ID=reaction_id, ROBOT_ID=robot[0],
+                 ROBOT_NAME=robot[1], REACTION_NAME=reaction_name, REACTION_STATUS="QUEUED",
+                  TABLE_NAME=table_name)
+                db.session.add(reaction_status)
+                db.session.commit()
             db.session.commit()
             flash(f"Successfully added table {table_name}")
             return redirect(url_for('general.add_reaction'))
-        except exc.ProgrammingError as e:
+        except (exc.ProgrammingError, exc.IntegrityError) as e:
             flash("Failed to insert data" + str(e))
             return redirect(url_for('general.batch_add_reaction'))
                  

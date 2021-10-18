@@ -5,27 +5,40 @@
     <title>Add new reaction</title>
     <link rel="stylesheet" href="/static/css/structure.css">
     <script id="main">
-            var num_fields = 11
-            function add_field(){
+            var num__param_fields = 11
+            function add_param_field(){
                 var table = document.getElementById("reaction-parameters");
                 var row = table.insertRow(table.rowCount);
                 for (var i=1; i<5; i++){
                     var field_name = "inner" + i.toString();
-                    var field = create_field(field_name);
+                    var field = create_field(field_name, num_param_fields);
                     var cell = row.insertCell(i-1);
                     cell.innerHTML = field;
                 }
-                num_fields += 1;
+                num_param_fields += 1;
             }
 
-            function create_field(name){
+            var num_results_fields = 4
+            function add_result_field(){
+                var table = document.getElementById("results");
+                var row = table.insertRow(table.rowCount);
+                for (var i=1; i<4; i++){
+                    var field_name = "rinner" + i.toString();
+                    var field = create_field(field_name, num_results_fields);
+                    var cell = row.insertCell(i-1);
+                    cell.innerHTML = field;
+                }
+                num_results_fields += 1;
+            }
+
+            function create_field(name, num_fields){
                 innerHTML = document.getElementById(name).innerHTML;
                 innerHTML = innerHTML.replace(/{num}/g, num_fields);
                 return innerHTML;
             }
     </script>
     <div style="display: none" id="inner1">
-        <label for="param{num}name">Parameter{num}</label>
+        <label for="param{num}name">Parameter {num}</label>
     </div>
     <div style="display: none" id="inner2">
         <input class="input-field" id="param{num}name" name="param{num}name" placeholder="Param {num} name">
@@ -35,21 +48,34 @@
     </div>
     <div style="display: none" id="inner4">
         <select name="param{num}units" id="param{num}units">
+            <optgroup label="Volume">
+                <option value="ml">ml</option>
+                <option value="ul">&#956;l</option>
+            </optgroup>
             <optgroup label="Time">
                 <option value="seconds">Seconds</option>
                 <option value="minutes">Minutes</option>
                 <option value="hours">Hours</option>
-            </optgroup>
-            <optgroup label="Volume">
-                <option value="ml">ml</option>
-                <option value="ul">&#956;l</option>
             </optgroup>
             <optgroup label="Mass">
                 <option value="g">g</option>
                 <option value="mg">mg</option>
                 <option value="ug">&#956;g</option>
             </optgroup>
+            <optgroup label="Temperature">
+                <option value="°C">&#176;C</option>
+                <option value="K">K</option>
+            </optgroup>
         </select>
+    </div>
+    <div style="display:none" id="rinner1">
+        <td><label for="results{num}">Results {num}</label></td>
+    </div>
+    <div style="display:none" id="rinner2">
+        <input class="input-field" id="results{num}" name="results{num}" placeholder="Results {num} type">
+    </div>
+    <div style="display:none" id="rinner3">
+        <input class="input-field" id="results{num}units" name="results{num}units" placeholder="Results {num} units">
     </div>
 </head>
 <body>
@@ -95,14 +121,14 @@
                     <td><label for="param{{i}}units">Select units</label></td>
                     <td>
                         <select name=param{{i}}units id=param{{i}}units>
+                            <optgroup label="Volume">
+                                <option value="ml">ml</option>
+                                <option value="ul">&#956;l</option>
+                            </optgroup>
                             <optgroup label="Time">
                                 <option value="seconds">Seconds</option>
                                 <option value="minutes">Minutes</option>
                                 <option value="hours">Hours</option>
-                            </optgroup>
-                            <optgroup label="Volume">
-                                <option value="ml">ml</option>
-                                <option value="ul">&#956;l</option>
                             </optgroup>
                             <optgroup label="Mass">
                                 <option value="g">g</option>
@@ -113,9 +139,6 @@
                                 <option value="°C">&#176;C</option>
                                 <option value="K">K</option>
                             </optgroup>
-                            <optgroup label="Colour">
-                                <option value="hex">Hexadecimal RGB</option>
-                            </optgroup>
                         </select>
                     </td>
                 </tr>
@@ -125,19 +148,21 @@
         <table id="results" class="form-table">
             <tr>
                 <td><label for="results1">Results 1</label></td>
-                <td><input class="input-field" id="results0" name="results0" placeholder="Results 1 type"></td>
-                <td><input class="input-field" id="results0units" name="results0units" placeholder="Results 1 units"></td>
+                <td><input class="input-field" id="results1" name="results1" placeholder="Results 1 type"></td>
+                <td><input class="input-field" id="results1units" name="results1units" placeholder="Results 1 units"></td>
             </tr>
             <tr>
                 <td><label for ="results2">Results 2</label></td>
-                <td><input class="input-field" id="results1" name="results1" placeholder="Results 2 type"></td>
-                <td><input class="input-field" id="results1units" name="results1units" placeholder="Results 2 units"></td>
+                <td><input class="input-field" id="results2" name="results2" placeholder="Results 2 type"></td>
+                <td><input class="input-field" id="results2units" name="results2units" placeholder="Results 2 units"></td>
             </tr>
             <tr>
                 <td><label for="results3">Results 3</label></td>
-                <td><input class="input-field" id="results2" name="results2" placeholder="Results 3 type"></td>
-                <td><input class="input-field" id="results2units" name="results2units" placeholder="Results 3 type"></td>
+                <td><input class="input-field" id="results3" name="results3" placeholder="Results 3 type"></td>
+                <td><input class="input-field" id="results3units" name="results3units" placeholder="Results 3 type"></td>
             </tr>
+        </table>
+        <table id="other-params" class="form-table">
             <tr>
                 <td><label for="protocol">Please upload a protocol file (json or XDL)</label></td>
                 <td><input type="file" id="protocol" name="protocol"></td>
@@ -147,7 +172,8 @@
                 <td><input type="checkbox" id="clean-step" name=clean-step value="clean"></checkbox></td>
             </tr>
         </table>
-        <button id="add-field" type="button" onclick="add_field()">Add field</button>
+        <button id="add-param-field" type="button" onclick="add_param_field()">Add parameter field</button>
+        <button id="add-results-field" type="button" onclick="add_result_field()">Add result field</button>
         <button id="submit-button" type="submit">Submit</button>
     </form>
 </body>

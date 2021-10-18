@@ -30,7 +30,7 @@ class SynthesisPlanner:
         Returns:
             string: A utf-8 encoded XDL string.
         """
-        protocol = cls.load_xdl(xdl_file)
+        protocol = cls.load_xdl_file(xdl_file)
         if protocol[0] is None:
             return False, protocol[1]
         else:
@@ -58,7 +58,7 @@ class SynthesisPlanner:
             return True, xdl_string
 
     @classmethod
-    def load_xdl(cls, xdl_file):
+    def load_xdl_file(cls, xdl_file):
         xdl_file = os.path.join(current_app.config['PROTOCOL_FOLDER'], xdl_file)
         if xdl_file[-4:] == ".xdl":
             try:
@@ -77,6 +77,14 @@ class SynthesisPlanner:
                 return (None, str(e))
         return (protocol,)
     
+    @classmethod
+    def load_xdl_string(cls, xdl_string):
+        try:
+            protocol = et.fromstring(xdl_string)
+        except et.ParseError as e:
+            return None, e
+        return protocol, None
+
     @classmethod
     def get_units(cls, units):
         units = units.split('[')[1][:-1]
