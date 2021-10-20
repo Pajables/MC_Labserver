@@ -120,7 +120,7 @@ def export_csv():
             results = reaction_info['results']
             reaction_data = db.session.execute(f"SELECT * FROM {table_name};")
             file, directory = utils.write_csv(reaction_name, reaction_params, results, reaction_data)
-            return send_from_directory(directory=directory, path="", filename=file, as_attachment=True)
+            return send_from_directory(directory, "", filename=file, as_attachment=True)
         except  FileNotFoundError:
             abort(404)
 
