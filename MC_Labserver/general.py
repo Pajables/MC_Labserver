@@ -343,6 +343,8 @@ def show_queue():
             columns.append(column)
         queue_items = db.session.execute("SELECT * FROM Robot_Queue")
         pages_data, pages, page_nr = split_results(request, queue_items)
+        if not pages_data:
+            return render_template('general/show_queue.html', num_pages=0)
         return render_template('general/queue_show.html', columns=columns, queue_items=pages_data[page_nr],
                                             cur_page=page_nr, num_pages=pages,
                                             results_per_page=request.args.get('results_per_page'))
@@ -395,6 +397,9 @@ def queue_reaction():
             except exc.ProgrammingError as e:
                 flash("Query failed: " + str(e))
                 return redirect(url_for('general.queue_reaction'))
+        else:
+            flash("Incorrect parameters supplied")
+            return redirect(url_for('general.queue_reaction'))
     
 @general.route('/unqueue', methods=['GET'])
 @login_required
