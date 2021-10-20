@@ -120,10 +120,9 @@ def export_csv():
             results = reaction_info['results']
             reaction_data = db.session.execute(f"SELECT * FROM {table_name};")
             file, directory = utils.write_csv(reaction_name, reaction_params, results, reaction_data)
-            return send_from_directory(directory, "", file, as_attachment=True)
+            return send_from_directory(directory, file, as_attachment=True)
         except  FileNotFoundError:
             abort(404)
-
 
 @general.route("/add_reaction", methods=['GET', 'POST'])
 @login_required
@@ -375,7 +374,7 @@ def queue_reaction():
         form_output = utils.process_queue_form(request.form, reaction_params)
         robot = form_output["robot"]
         parameters = form_output["parameters"]
-        if parameters and robot:
+        if len(parameters) == len(reaction_params) and robot:
             try:
                 reaction_id = db.session.execute("SELECT REACTION_ID FROM Reactions_Status WHERE REACTION_ID=(SELECT MAX(REACTION_ID) FROM Reactions_Status)").fetchone()
                 if reaction_id is None:
