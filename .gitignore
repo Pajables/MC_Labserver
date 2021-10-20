@@ -16,8 +16,5 @@ MC_Labserver/__pycache__/models.cpython-38.pyc
 MC_Labserver/__pycache__/robots_api.cpython-38.pyc
 MC_Labserver/__pycache__/synthesis_planner.cpython-38.pyc
 MC_Labserver/__pycache__/utils.cpython-38.pyc
-MC_Labserver/static/uploads/reaction_protocols/
 .vscode/launch.json
-MC_Labserver/static/sent_files/
-MC_Labserver/static/reaction_images/
 MC_Labserver/__pycache__/azo_synthesis.cpython-38.pyc
