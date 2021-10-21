@@ -1,4 +1,5 @@
-import re
+import sys
+import datetime
 from . import synthesis_planner
 from flask import Blueprint, request, send_from_directory, jsonify
 from functools import wraps
@@ -8,7 +9,7 @@ from . import db
 from .models import Robots, RobotQueue, Reactions, ReactionStatus
 from . import utils
 from . import synth_planner
-import sys
+
 
 
 robots_api = Blueprint("robots_api", __name__)
@@ -53,11 +54,22 @@ def status():
     if request.method == 'POST':
         if cmd == "robot_status":
             robot_status = json_args.get('robot_status')
-            robot.ROBOT_STATUS = robot_status
-            if robot_status == "ERROR":
-                robot.ERROR_STATE = 1
-            db.session.commit()
-            return jsonify({'robot_status': 'updated'})
+            reaction_complete = json_args.get('reaction_complete')
+            try:
+                if reaction_complete:
+                    reaction_id = json_args.get('reaction_id')
+                    today = datetime.date.today()
+                    RobotQueue.query.filter_by(REACTION_ID=reaction_id).delete()
+                    status = ReactionStatus.query.filter_by(REACTION_ID=reaction_id).first()
+                    status.REACTION_STATUS = 'COMPLETE'
+                    status.JOB_COMPLETION_DATE = f"{today.year}-{today.month}-{today.day}"
+                robot.ROBOT_STATUS = robot_status
+                if robot_status == "ERROR":
+                    robot.ERROR_STATE = 1
+                db.session.commit()
+                return jsonify({'robot_status': 'updated'})
+            except (exc.ProgrammingError, exc.exc.IntegrityError) as e:
+                return jsonify({"error": f"{e}"})
     elif request.method == "GET":
         if cmd == "robot_execute":
             return jsonify({"action": robot.EXECUTE})
@@ -97,11 +109,9 @@ def reactions():
             # offset reaction data to account for last_update, reaction_id, user_id columns
             parameters.append([reaction_params[i], reaction_data[i+4]])
         xdl = synthesis_planner.SynthesisPlanner.update_xdl(parameters, xdl_file)
-        clean_step = reaction_data[i + 4]
+        clean_step = reaction_data[3]
         if xdl[0]:
-            RobotQueue.query.filter_by(REACTION_ID=next_item.REACTION_ID).delete()
-            db.session.commit()
-            return jsonify({"name": reaction_name, "reaction_id": next_item.REACTION_ID, "protocol": xdl[1],  'xdl_file': xdl_file, 'REACTION_ID': reaction_data[1], "parameters": [(item[0], item[1]) for item in parameters], "clean_step": clean_step})
+            return jsonify({"name": reaction_name, "reaction_id": next_item.REACTION_ID, "protocol": xdl[1],  'xdl_file': xdl_file, "parameters": [(item[0], item[1]) for item in parameters], "clean_step": clean_step})
         else:
             return jsonify({"error": xdl[1]})
 

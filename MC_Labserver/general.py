@@ -344,7 +344,7 @@ def show_queue():
         queue_items = db.session.execute("SELECT * FROM Robot_Queue")
         pages_data, pages, page_nr = split_results(request, queue_items)
         if not pages_data:
-            return render_template('general/show_queue.html', num_pages=0)
+            return render_template('general/queue_show.html', columns=columns, cur_page=1, queue_items=[], num_pages=1, results_per_page=request.args.get('results_per_page'))
         return render_template('general/queue_show.html', columns=columns, queue_items=pages_data[page_nr],
                                             cur_page=page_nr, num_pages=pages,
                                             results_per_page=request.args.get('results_per_page'))
