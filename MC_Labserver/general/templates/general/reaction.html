@@ -25,6 +25,7 @@
                 <th>Last Update</th>
                 <th>Reaction ID</th>
                 <th>User ID</th>
+                <th>Manual cleaning step</th>
                 {% for param in reaction_params %}
                 <th>{{param}}</th>
                 {% endfor %}
@@ -32,7 +33,7 @@
                 <th>{{result}}</th>
                 {% endfor %}
             </tr>
-            {% for record in reaction_table %}
+            {% for record in reaction_data %}
             <tr>
                 {% for item in record %}
                     <td>{{item}}</td>
@@ -43,6 +44,20 @@
             </tr>
             {% endfor %}
         </table>
+        <div id="page-count">
+            Pages:
+            {% for i in range(num_pages) %}
+                <a href="{{url_for('general.display_reactions', reaction_name=reaction_name, page_nr=i, results_per_page=results_per_page)}}">{{i+1}}</a>
+            {% endfor %}
+        </div>
+        <div>
+            Results per page:
+            <a href="{{url_for('general.display_reactions', reaction_name=reaction_name, results_per_page=40)}}">40</a>
+            <a href="{{url_for('general.display_reactions', reaction_name=reaction_name, results_per_page=100)}}">100</a>
+            <a href="{{url_for('general.display_reactions', reaction_name=reaction_name, results_per_page=150)}}">150</a>
+        </div>
+        <h3>Current page: {{cur_page+1}}</h3>
+    <a href="{{url_for('general.export_csv', reaction_name=reaction_name)}}">Export all data for this reaction as a csv file</a>
     {% endif %}
     <div id="reaction-options">
         {% if sel_reaction %}

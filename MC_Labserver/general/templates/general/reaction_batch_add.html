@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Add new reaction batch</title>
+        <link rel="stylesheet" href="static/css/structure.css">
+    </head>
+    <body>
+        <div class="top-nav">
+            <a href="{{url_for('general.index')}}">Home</a>
+            <a href="{{url_for('general.robots')}}">Robot status</a>
+            <a href="{{url_for('general.reactions')}}">Reaction status</a>
+            <a class="active-nav" href="{{url_for('general.display_reactions')}}">Reaction-specific data</a>
+            <a href="{{url_for('general.queue_reaction')}}">Reaction queue</a>
+            <a href="{{url_for('auth.logout')}}">Log out</a>
+        </div>
+        {% if current_user.ADMIN == 1 %}
+        <div class="admin-nav">
+            <a href="{{url_for('auth.admin_panel')}}">Administrator panel</a>
+        </div>
+        {% endif %}
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="urgent_notification">
+                    {{messages[0]}}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <form method="POST" enctype="multipart/form-data" action="/batch_add_reaction">
+            <table class="form-table">
+                <tr>
+                    <td><label for="reaction_name">Reaction name</label></td>
+                    <td><input class="input-field" id="reaction_name" name="reaction_name" placeholder="Reaction name"></td>
+                </tr>
+                <tr>
+                    <td><label for="reaction_csv">Please upload the CSV file containing the reactions. Blank data points will be used to determine result columns.</label></td>
+                    <td><input type="file" id="reaction_csv" name="reaction_csv"></td>
+                    <td><label for="csv_delim">Please enter the delimiting character for the CSV file:</label></td>
+                    <td><input id="csv_delim" name="csv_delim"></td>
+                </tr>
+                <tr>
+                    <td><label for="protocol">Please upload the XDL file for this reaction</label></td>
+                    <td><input type="file" id="protocol" name="protocol"></td>
+                </tr>
+                <tr>
+                    <td><label for="clean-step">Does this reaction require manual cleaning?</label></td>
+                    <td><input type="checkbox" id="clean-step" name=clean-step value="clean"></checkbox></td>
+                </tr>
+                <tr>
+                    <td>Which robots are taking part in this reaction?</td>
+                </tr>
+                {% for i in range(num_bots) %}
+                <tr>
+                    <td>
+                        <input type="checkbox" id="robot{{i}}" name="robot{{i}}" value="{{avail_robots[i][0] + '$' + avail_robots[i][1]}}">
+                        <label for="robot{{i}}">{{avail_robots[i][1]}}</label>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            <button id="submit-button" type="submit">Submit</button>
+        </form>
+    </body>
+</html>
