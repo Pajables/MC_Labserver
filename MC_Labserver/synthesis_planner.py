@@ -82,7 +82,7 @@ class SynthesisPlanner:
         try:
             protocol = et.fromstring(xdl_string)
         except et.ParseError as e:
-            return None, e
+            return None, str(e)
         return protocol, None
 
     @classmethod

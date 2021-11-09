@@ -162,8 +162,8 @@ def add_reaction():
 @general.route("/batch_add_reaction", methods=["GET", "POST"])
 @login_required
 def batch_add_reaction():
+    avail_robots = utils.get_avail_robots(db)
     if request.method == "GET":
-        avail_robots = utils.get_avail_robots(db)
         return render_template("general/reaction_batch_add.html", avail_robots=avail_robots, num_bots=len(avail_robots))
     elif request.method == "POST":
         avail_robots = utils.get_avail_robots(db)
@@ -176,12 +176,12 @@ def batch_add_reaction():
             clean_step = 1
         csv_filename, e = utils.upload_protocol(request, "reaction_csv")
         if csv_filename is None:
-            flash(f'Failed to add {csv_filename} file.' + e)
-            return render_template("general/reaction_batch_add.html")
+            flash(f'Failed to add csv {csv_filename} file.' + e)
+            return render_template("general/reaction_batch_add.html", avail_robots=avail_robots, num_bots=len(avail_robots))
         xdl_filename, e = utils.upload_protocol(request, "protocol")
         if xdl_filename is None:
-            flash(f"Failed to add {xdl_filename} file" + e)
-            return render_template("general/reaction_batch_add.html")
+            flash(f"Failed to add xdl {xdl_filename} file" + e)
+            return render_template("general/reaction_batch_add.html", avail_robots=avail_robots, num_bots=len(avail_robots))
         last_reaction_id = db.session.execute("SELECT REACTION_ID FROM Reactions_Status WHERE REACTION_ID=(SELECT MAX(REACTION_ID) FROM Reactions_Status)").fetchone()
         reaction_id = None
         if last_reaction_id is None:
@@ -244,7 +244,7 @@ def batch_add_reaction():
             return redirect(url_for('general.add_reaction'))
         except (exc.ProgrammingError, exc.IntegrityError) as e:
             flash("Failed to insert data" + str(e))
-            return redirect(url_for('general.batch_add_reaction'))
+            return redirect(url_for('general.add_reaction'))
                  
 
 @general.route("/manual_input", methods=['GET', 'POST'])

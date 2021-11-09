@@ -25,16 +25,19 @@ def upload_protocol(request, protocol_type):
         e =f"{protocol_type} file not found"
         return None, e
     file = request.files[protocol_type]
-    xdl = file.read()
-    protocol, error = SynthesisPlanner.load_xdl_string(xdl)
-    if protocol is None:
-        return None, error
     filename = sanitise_file(file)
     if filename is None:
         e = "That file extension is not recognised"
         return None, e
-    with open(os.path.join(current_app.config['PROTOCOL_FOLDER'], filename), 'w+', encoding="UTF-8") as file:
-        file.write(xdl.decode('UTF-8'))
+    if protocol_type == 'protocol':
+        xdl = file.read()
+        protocol, error = SynthesisPlanner.load_xdl_string(xdl)
+        if protocol is None:
+            return None, error
+        with open(os.path.join(current_app.config['PROTOCOL_FOLDER'], filename), 'w+', encoding="UTF-8") as file:
+            file.write(xdl.decode('UTF-8'))
+    else:
+        file.save(os.path.join(current_app.config['PROTOCOL_FOLDER'], filename))
     return filename, e
 
 def sanitise_file(file):

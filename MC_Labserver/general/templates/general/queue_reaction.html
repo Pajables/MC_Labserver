@@ -13,7 +13,9 @@
     {% endwith %}
     <h2>Choose a reaction to queue:</h2>
     {% for item in all_reactions %}
-    <a href="{{url_for('general.queue_reaction', reaction_name=item )}}">{{item}}</a>
+    <div>
+        <a href="{{url_for('general.queue_reaction', reaction_name=item )}}">{{item}}</a>
+    </div>
     {% endfor %}
     {% if reaction_params != None and all_robots %}
         <h2>{{reaction_name}}</h2>
