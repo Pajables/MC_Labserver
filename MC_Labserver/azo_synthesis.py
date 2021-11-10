@@ -5,10 +5,13 @@ class AzoSynthesis:
     def __init__(self):
         pass
 
-    def get_reaction_colour(self, img, roi):
+    def get_reaction_colour(self, img, roi, filename):
+        filename = filename[:-4]
         cropped_image = img[roi[1]:roi[1]+roi[3], roi[0]:roi[0]+roi[2]]
         mask = self.generate_mask(cropped_image)
+        cv.imwrite(filename + "_crop.png", mask)
         result = cv.bitwise_and(cropped_image, cropped_image, mask=mask)
+        cv.imwrite(filename + "_mask.png", result)
         return self.get_colour(result)
 
     def get_colour(self, img):

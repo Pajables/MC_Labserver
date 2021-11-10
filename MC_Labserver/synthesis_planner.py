@@ -126,7 +126,7 @@ class SynthesisPlanner:
         if img_metadata.get('img_processing') == "azo":
             try:
                 roi = img_metadata.get('img_roi')
-                colour = self.azo.get_reaction_colour(img, roi)
+                colour = self.azo.get_reaction_colour(img, roi, filename)
                 b, g, r = colour
                 print(r, g, b, file=sys.stderr)
                 hexnum = int(r) << 16
