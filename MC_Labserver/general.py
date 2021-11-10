@@ -222,7 +222,6 @@ def batch_add_reaction():
             next_robot = get_next_robot(robots_participating, total_reactions)
             for row in reaction_data:
                 final_insert_sql = insert_sql + f"VALUES ({reaction_id}, {current_user.USER_ID}, {clean_step}, "
-                reaction_id += 1
                 robot = next(next_robot)
                 for i in range(len(row)):
                     if i in insert_cols:
@@ -238,7 +237,7 @@ def batch_add_reaction():
                  ROBOT_NAME=robot[1], REACTION_NAME=reaction_name, REACTION_STATUS="QUEUED",
                   TABLE_NAME=table_name)
                 db.session.add(reaction_status)
-                db.session.commit()
+                reaction_id += 1
             db.session.commit()
             flash(f"Successfully added table {table_name}")
             return redirect(url_for('general.add_reaction'))
