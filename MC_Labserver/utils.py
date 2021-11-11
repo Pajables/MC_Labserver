@@ -9,7 +9,7 @@ from .synthesis_planner import SynthesisPlanner
 
 unit_db_map = {"seconds": "INT", "minutes": "DOUBLE", "hours": "DOUBLE",
                "ml": "DOUBLE", "ul": "DOUBLE", "g": "DOUBLE", "mg": "DOUBLE",
-                "ug": "DOUBLE", "°C": "DOUBLE", "K": "DOUBLE", "hex": "INT"}
+                "ug": "DOUBLE", "°C": "DOUBLE", "K": "DOUBLE", "hex": "VARCHAR"}
 
 
 def generate_img_id():
