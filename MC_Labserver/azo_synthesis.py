@@ -30,7 +30,6 @@ class AzoSynthesis:
         upper_width = int(width - 0.1*width)
         hsv_img = cv.cvtColor(img, cv.COLOR_BGR2HSV_FULL)
         centre_of_img = img[lower_height:upper_height, lower_width:upper_width]
-        cv.imshow("cente", centre_of_img)
         avg_colour = self.get_colour(centre_of_img)
         avg_img = np.ones((200,200,3), np.uint8)
         avg_img[:,:] = avg_colour

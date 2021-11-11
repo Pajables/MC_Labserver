@@ -147,7 +147,8 @@ def get_image():
                             reaction_id = cur_img_metadata.get('reaction_id')
                             reaction_data = Reactions.query.filter_by(REACTION_NAME=cur_img_metadata['reaction_name']).first()
                             table = reaction_data.TABLE_NAME
-                            db.session.execute(f"UPDATE {table} SET colour{img_number}_$result$hex = {img_hex_colour}  WHERE REACTION_ID = {reaction_id};")
+                            img_hex_colour = img_hex_colour[0:2] + img_hex_colour[2:].upper()
+                            db.session.execute(f"UPDATE {table} SET colour{img_number}_$result$hex = '" + img_hex_colour + f"' WHERE REACTION_ID = {reaction_id};")
                             db.session.commit()
                             return jsonify({"status": "image accepted"})
                         except (exc.ProgrammingError, AttributeError) as e:
