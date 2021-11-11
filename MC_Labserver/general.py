@@ -192,7 +192,7 @@ def batch_add_reaction():
         insert_cols = []
         num = 0
         table_name = reaction_name.replace(" ", "_").upper()
-        create_sql = f"CREATE TABLE IF NOT EXISTS {table_name} (LAST_UPDATE_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, REACTION_ID INT, USER_ID INT, CLEAN_STEP INT,"
+        create_sql = f"CREATE TABLE IF NOT EXISTS {table_name} (LAST_UPDATE_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, REACTION_ID INT, USER_ID INT, CLEAN_STEP INT, "
         insert_sql = f"INSERT INTO {table_name} (REACTION_ID, USER_ID, CLEAN_STEP, "
         for column in columns:
             create_sql += column[0] + " " + column[1] + ", "

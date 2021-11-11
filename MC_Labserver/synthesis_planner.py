@@ -133,7 +133,7 @@ class SynthesisPlanner:
                 hexnum = int(r) << 16
                 hexnum = hexnum | (int(g) << 8)
                 hexnum = hexnum | int(b)
-                return hexnum
+                return hex(hexnum)
             except AttributeError:
                 return jsonify({'error': f"{img_metadata.get('img_processing')} has not been implemented on this server instance"})
         return f"{img.shape[1]}x{img.shape[0]}"
