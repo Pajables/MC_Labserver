@@ -1,4 +1,4 @@
-<? xdl version="1.0"?>
+<?xdl version="1.0"?>
 <XDL>
     <Synthesis>
         <Metadata>
@@ -19,12 +19,12 @@
             <HeatChillToTemp
                 vessel="reactor"
                 temp=""
-                step_param0="param0"/>
+                step_param0="param_0"/>
             <!--Maintain reactor temperature-->
             <StartHeatChill 
                 vessel="reactor" 
                 temp=""
-                step_param0="param0"/>
+                step_param0="param_0"/>
             <!--Maintain stirrring-->
             <StartStir
                 vessel="reactor"
@@ -35,23 +35,26 @@
                 vessel="Reactor1" 
                 volume="" 
                 stir="False" 
-                step_param0="param1"
+                step_param0="param_1"
                 />
             <!--Add sulphuric acid-->
             <Add
-                reagent="sulphuric_acid" 
+                reagent="sulphuric_acid"
+		vessel="reactor"
                 volume="0.5 ml" 
                 stir="False"
             />
             <!--Flush sulphuric acid into reactor with 1ml acetic anhydride-->
             <Add
                 reagent="acetic_anhydride"
+		vessel="reactor"
                 volume="1 ml"
                 stir="False"
             />
             <!--Flush last acetic anhydride into reactor with water-->
             <Add
                 reagent="water"
+		vessel="reactor"
                 volume="0.3 ml"
                 stir="False"
             />
@@ -60,8 +63,8 @@
                 vessel="Reactor1"
                 temp=""
                 time=""
-                step_param0="param0"
-                step_param1="param3"
+                step_param0="param_0"
+                step_param1="param_3"
             />
             <!--Add water to quench reaction-->
             <Add
@@ -73,7 +76,7 @@
             <HeatChill
                 vessel="Reactor1"
                 temp="25 °C"
-                time="600 seconds"
+                time="600 seconds"/>
         </Procedure>
     </Synthesis>
 </XDL>
