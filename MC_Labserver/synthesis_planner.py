@@ -122,17 +122,19 @@ class SynthesisPlanner:
         filename = f"{img_metadata['reaction_name']}_ID{img_metadata['reaction_id']}_IMG{img_metadata['img_number']}.png"
         nparr = np.fromstring(data, np.uint8)
         img = cv.imdecode(nparr, cv.IMREAD_COLOR)
-        cv.imwrite(os.path.join(current_app.config['REACTION_IMAGE_FOLDER'],filename), img)
+        filepath = os.path.join(current_app.config['REACTION_IMAGE_FOLDER'],filename)
+        cv.imwrite(filepath, img)
         if img_metadata.get('img_processing') == "azo":
             try:
                 roi = img_metadata.get('img_roi')
-                colour = self.azo.get_reaction_colour(img, roi)
+                colour = self.azo.get_reaction_colour(img, roi, filepath)
                 b, g, r = colour
                 print(r, g, b, file=sys.stderr)
                 hexnum = int(r) << 16
                 hexnum = hexnum | (int(g) << 8)
                 hexnum = hexnum | int(b)
-                return hexnum
+                print(hex(hexnum), file=sys.stderr)
+                return hex(hexnum)
             except AttributeError:
                 return jsonify({'error': f"{img_metadata.get('img_processing')} has not been implemented on this server instance"})
         return f"{img.shape[1]}x{img.shape[0]}"

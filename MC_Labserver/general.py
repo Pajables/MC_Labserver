@@ -33,6 +33,7 @@ def robots():
     if request.method == "GET":
         return render_template('general/robots.html', robots_data=robots_data)
 
+
 @general.route("/robots/clear_error", methods=["GET"])
 @login_required
 def clear_error():
@@ -41,6 +42,7 @@ def clear_error():
     robot.ERROR_STATE = 0
     db.session.commit()
     return redirect(url_for('general.robots'))
+
 
 @general.route("/robots/execute", methods=["GET"])
 @login_required
@@ -192,7 +194,7 @@ def batch_add_reaction():
         insert_cols = []
         num = 0
         table_name = reaction_name.replace(" ", "_").upper()
-        create_sql = f"CREATE TABLE IF NOT EXISTS {table_name} (LAST_UPDATE_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, REACTION_ID INT, USER_ID INT, CLEAN_STEP INT,"
+        create_sql = f"CREATE TABLE IF NOT EXISTS {table_name} (LAST_UPDATE_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, REACTION_ID INT, USER_ID INT, CLEAN_STEP INT, "
         insert_sql = f"INSERT INTO {table_name} (REACTION_ID, USER_ID, CLEAN_STEP, "
         for column in columns:
             create_sql += column[0] + " " + column[1] + ", "
@@ -222,7 +224,6 @@ def batch_add_reaction():
             next_robot = get_next_robot(robots_participating, total_reactions)
             for row in reaction_data:
                 final_insert_sql = insert_sql + f"VALUES ({reaction_id}, {current_user.USER_ID}, {clean_step}, "
-                reaction_id += 1
                 robot = next(next_robot)
                 for i in range(len(row)):
                     if i in insert_cols:
@@ -238,7 +239,7 @@ def batch_add_reaction():
                  ROBOT_NAME=robot[1], REACTION_NAME=reaction_name, REACTION_STATUS="QUEUED",
                   TABLE_NAME=table_name)
                 db.session.add(reaction_status)
-                db.session.commit()
+                reaction_id += 1
             db.session.commit()
             flash(f"Successfully added table {table_name}")
             return redirect(url_for('general.add_reaction'))

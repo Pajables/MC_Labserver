@@ -44,6 +44,7 @@ def index():
     db.session.commit()
     return jsonify({'conn_status': 'accepted'})
 
+
 @robots_api.route("/status", methods=['GET','POST'])
 @requires_robot_login
 def status():
@@ -77,6 +78,7 @@ def status():
             return jsonify({"error_state": robot.ERROR_STATE})
     return jsonify({"conn_status": "refused"})
 
+
 @robots_api.route("/complete_reaction", methods=['POST'])
 @requires_robot_login
 def complete_reaction():
@@ -85,6 +87,7 @@ def complete_reaction():
         reaction_id = json_args.get('reaction_id')
         ReactionStatus.query.filter_by(REACTION_ID=reaction_id).delete()
         db.session.commit()
+
 
 @robots_api.route('/reaction', methods=['GET'])
 @requires_robot_login
@@ -115,11 +118,12 @@ def reactions():
         else:
             return jsonify({"error": xdl[1]})
 
+
 @robots_api.route('/send_image', methods=['POST'])
 def get_image():
     if request.method == 'POST':
         request_id = request.args.get('request_id')
-        #first get metadata and reply with a unique ID
+        # first get metadata and reply with a unique ID
         if request_id is None:
             json_args = request.get_json()
             if json_args is None:
@@ -130,7 +134,7 @@ def get_image():
             request_id = utils.generate_img_id()
             img_metadata[request_id] = cur_img_metadata
             return jsonify({"request_id": request_id})
-        #check that our ID matches metadata on file, if so then finalise upload.
+        # check that our ID matches metadata on file, if so then finalise upload.
         else:
             request_id = request.args.get('request_id')
             cur_img_metadata = img_metadata.get(request_id)
@@ -147,7 +151,7 @@ def get_image():
                             reaction_id = cur_img_metadata.get('reaction_id')
                             reaction_data = Reactions.query.filter_by(REACTION_NAME=cur_img_metadata['reaction_name']).first()
                             table = reaction_data.TABLE_NAME
-                            db.session.execute(f"UPDATE {table} SET colour{img_number}_$result$hex = {img_hex_colour}  WHERE REACTION_ID = {reaction_id};")
+                            db.session.execute(f"UPDATE {table} SET colour{img_number}_$result$hex = '" + img_hex_colour + f"' WHERE REACTION_ID = {reaction_id};")
                             db.session.commit()
                             return jsonify({"status": "image accepted"})
                         except (exc.ProgrammingError, AttributeError) as e:
