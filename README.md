@@ -12,6 +12,10 @@ All `code blocks` signal that the command should be entered into a terminal usin
 
 `sudo apt-get install mariadb-server mariadb-client mariadb-backup`
 
+Start the database server:
+
+`sudo service mysql start`
+
 For new MariaDB installations, the next step is to run the included security script. This script changes some of the less secure default options for things like remote root logins and sample users.
 
 `sudo mysql_secure_installation`
@@ -53,6 +57,7 @@ To set up the correct tables for the webserver, we need mysqlclient and flask:
 ```
 sudo apt-get install default-libmysqlclient-dev build-essential
 pip3 install mysqlclient
+pip3 install flask
 ```
 
 Now you can run the database creation scripts for the web server, these are:
@@ -61,7 +66,7 @@ Now you can run the database creation scripts for the web server, these are:
 2. robots.py
 3. reactions.py
 4. reaction_status.py
-5. robots_queue.py
+5. robot_queue.py
 
 To run each of the scripts navigate to the directory you unzipped or cloned the repository and run:
 
@@ -75,15 +80,14 @@ First, run the following to set up the connectors for python:
 `sudo apt-get install libmariadb3 libmariadb-dev`
 
 The following python libraries are required for the web server:
-
-1. flask 
-2. flask_sqlalchemy
-3. flask-login
+ 
+1. flask_sqlalchemy
+2. flask-login
 3. mariadb
 4. python-dotenv
 
 ```
-pip3 install flask flask_sqlalchemy flask-login
+pip3 install flask_sqlalchemy flask-login
 pip3 install mariadb
 pip3 install python-dotenv
 ```
